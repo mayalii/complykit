@@ -2,14 +2,14 @@
 const translations = {
   ar: {
     // Header
-    subtitle: "تناسق البراند + توافق الأنظمة السعودية",
+    subtitle: "محتوى موحّد — جمهورك يعرفك من أول نظرة",
     nav_dashboard: "📊 لوحة التحكم",
     nav_onboarding: "➕ إضافة شركة",
     nav_check: "✅ فحص المحتوى",
 
     // Hero
-    hero_title: "محتوى متناسق،<br/>ومتوافق مع الأنظمة.",
-    hero_desc: "أول منصة سعودية تضمن إن محتواك يعكس هوية شركتك ويتوافق مع الأنظمة المحلية — فحص مزدوج بالذكاء الاصطناعي قبل النشر.",
+    hero_title: "محتواك يتكلم بصوت واحد،<br/>وجمهورك يعرفك من أول كلمة.",
+    hero_desc: "خلّ كل بوست وكل إعلان وكل إيميل يطلع من شركتك بنفس الهوية — أي شخص يشوف محتواك يعرف فوراً إنه لك. ComplyKit يضمن توحيد المحتوى + التوافق مع الأنظمة السعودية قبل النشر.",
     hero_btn_add: "➕ أضف شركة جديدة",
     hero_btn_check: "✅ افحص محتوى",
 
@@ -29,7 +29,7 @@ const translations = {
 
     // Onboarding
     onb_title: "إضافة شركة جديدة",
-    onb_desc: "أرسل دليل الأسلوب أو أمثلة محتوى وسنستخلص قائمة الفحص تلقائياً",
+    onb_desc: "ارفع دليل أسلوب شركتك أو أمثلة من محتواك — الذكاء الاصطناعي يستخلص قواعد هويتك تلقائياً",
     onb_company_label: "اسم الشركة *",
     onb_company_ph: "مثال: أرامكو، STC، نيوم...",
     onb_guidelines_label: "دليل الأسلوب / Brand Guidelines",
@@ -58,7 +58,7 @@ const translations = {
 
     // Content Check
     chk_title: "فحص المحتوى",
-    chk_desc: "الصق محتواك وسنفحصه مقابل قواعد شركتك والأنظمة السعودية",
+    chk_desc: "الصق محتواك وبنتأكد إنه يطلع بنفس هوية شركتك ومتوافق مع الأنظمة",
     chk_connected: "متصل",
     chk_logged_as: "مسجل دخول كـ",
     chk_select_label: "اختر قائمة الفحص",
@@ -110,27 +110,27 @@ const translations = {
 
     // About Section
     about_title: "ما هو ComplyKit؟",
-    about_desc: "أول منصة سعودية تفحص المحتوى الرقمي فحص مزدوج — تناسق مع هوية البراند + توافق مع الأنظمة السعودية المحلية. ارفع دليل أسلوب شركتك، والذكاء الاصطناعي يستخرج القواعد تلقائياً ويفحص كل محتوى قبل النشر.",
-    about_f1_title: "فحص مزدوج بالـ AI",
-    about_f1_desc: "يراجع تناسق البراند + توافق الأنظمة السعودية في نفس الوقت ويعطيك Brand Score + تقرير مفصّل.",
+    about_desc: "منصة تخلّي محتوى شركتك كله يطلع بنفس الصوت والهوية — ما يفرق إذا كتبه فريق التسويق أو المبيعات أو خدمة العملاء، الجمهور يشوف محتواك ويعرف فوراً إنه لك. وفوق كذا، يتأكد إن محتواك متوافق مع الأنظمة السعودية.",
+    about_f1_title: "صوت واحد لكل محتواك",
+    about_f1_desc: "يفحص كل قطعة محتوى ويتأكد إنها تعكس هوية شركتك — نفس النبرة، نفس المصطلحات، نفس الأسلوب. جمهورك يعرفك بدون ما يشوف اللوقو.",
     about_f2_title: "نسخة مصححة جاهزة",
-    about_f2_desc: "مقارنة قبل/بعد توضح كل تغيير ولماذا — نسخة مصححة جاهزة للنشر بضغطة زر.",
-    about_f3_title: "يتحسّن مع الوقت",
-    about_f3_desc: "كل فحص يبني قاعدة بيانات أقوى — التحليل يصير أدق وأذكى مع كل استخدام.",
+    about_f2_desc: "يعطيك نسخة معدّلة تطابق هوية شركتك بالضبط — مقارنة قبل/بعد توضح كل تعديل وليش تم.",
+    about_f3_title: "يتعلم أسلوبك",
+    about_f3_desc: "كل ما استخدمته أكثر، فهم أسلوب شركتك أعمق — يصير يعرف هويتك مثل ما يعرفها فريقك.",
     audience_title: "لمن هذا المنتج؟",
     aud_1_title: "فرق التسويق والمحتوى",
-    aud_1_desc: "تضمن إن كل بوست وإعلان وإيميل يعكس هوية الشركة بشكل موحّد قبل ما ينزل.",
+    aud_1_desc: "عندك أكثر من شخص يكتب محتوى؟ ComplyKit يضمن إن الكل يكتب بنفس الصوت — جمهورك يحس إن المحتوى من مصدر واحد.",
     aud_2_title: "الوكالات الإعلانية",
-    aud_2_desc: "تدير محتوى عدة شركات؟ كل شركة لها قواعدها — ComplyKit يضمن التناسق لكل عميل.",
+    aud_2_desc: "تدير محتوى عدة شركات؟ كل براند له صوته الخاص — ComplyKit يحافظ على هوية كل عميل بدون ما تتداخل.",
     aud_3_title: "الشركات الناشئة",
-    aud_3_desc: "تبني براندك من البداية؟ ComplyKit يساعدك تثبّت هويتك من أول محتوى تنشره.",
+    aud_3_desc: "تبني براندك من الصفر؟ ثبّت هويتك من أول محتوى — خلّ جمهورك يتعرف عليك من البداية.",
     aud_4_title: "أي جهة سعودية",
-    aud_4_desc: "تنشر محتوى رقمي وتحتاج تتوافق مع الأنظمة المحلية — PDPL، نظام التجارة الإلكترونية، وغيرها.",
+    aud_4_desc: "محتواك يمثّلك قدام الجمهور — ComplyKit يضمن إنه موحّد ومتوافق مع الأنظمة السعودية.",
     why_title: "ليش ComplyKit؟",
     why_without: "بدون ComplyKit",
-    why_without_desc: "مراجعة يدوية تاخذ ساعات، أخطاء تفوت، محتوى غير متناسق، ومخاطر مخالفات نظامية.",
+    why_without_desc: "كل شخص يكتب بطريقته، المحتوى يطلع مختلف كل مرة، وجمهورك ما يقدر يميّز هويتك — ومخاطر مخالفات نظامية فوق كذا.",
     why_with: "مع ComplyKit",
-    why_with_desc: "فحص تلقائي بثوانٍ، تناسق ١٠٠٪ مع البراند، توافق مع الأنظمة السعودية، ونسخة مصححة جاهزة.",
+    why_with_desc: "محتوى موحّد بصوت واحد — أي شخص يشوف محتواك يعرف إنه لشركتك. فحص تلقائي بثوانٍ + توافق مع الأنظمة السعودية.",
 
     // Footer
     footer_powered: "مدعوم بالذكاء الاصطناعي",
@@ -139,14 +139,14 @@ const translations = {
 
   en: {
     // Header
-    subtitle: "Brand Consistency + Saudi Compliance",
+    subtitle: "One Brand Voice — Recognized at First Glance",
     nav_dashboard: "📊 Dashboard",
     nav_onboarding: "➕ Onboarding",
     nav_check: "✅ Content Check",
 
     // Hero
-    hero_title: "Consistent Content,<br/>Compliant by Default.",
-    hero_desc: "The first Saudi platform that ensures your content reflects your brand identity AND complies with local regulations — dual AI-powered review before publishing.",
+    hero_title: "One Voice for All Your Content.<br/>Your Audience Knows It's You.",
+    hero_desc: "Every post, ad, and email from your company speaks with the same identity — anyone who sees your content instantly knows it's yours. ComplyKit ensures unified brand voice + Saudi regulatory compliance before publishing.",
     hero_btn_add: "➕ Add New Company",
     hero_btn_check: "✅ Check Content",
 
@@ -166,7 +166,7 @@ const translations = {
 
     // Onboarding
     onb_title: "Add New Company",
-    onb_desc: "Upload brand guidelines or content examples and we'll auto-extract a compliance checklist",
+    onb_desc: "Upload your brand guidelines or content examples — AI will auto-extract your brand identity rules",
     onb_company_label: "Company Name *",
     onb_company_ph: "e.g. Aramco, STC, NEOM...",
     onb_guidelines_label: "Style Guide / Brand Guidelines",
@@ -195,7 +195,7 @@ const translations = {
 
     // Content Check
     chk_title: "Content Check",
-    chk_desc: "Paste your content and we'll check it against your company's rules & Saudi regulations",
+    chk_desc: "Paste your content and we'll make sure it matches your brand identity & complies with regulations",
     chk_connected: "Connected",
     chk_logged_as: "Logged in as",
     chk_select_label: "Select Checklist",
@@ -247,27 +247,27 @@ const translations = {
 
     // About Section
     about_title: "What is ComplyKit?",
-    about_desc: "The first Saudi platform that dual-checks digital content — brand consistency + compliance with Saudi local regulations. Upload your style guide and AI extracts the rules automatically, checking every piece of content before publishing.",
-    about_f1_title: "Dual AI Check",
-    about_f1_desc: "Reviews brand consistency + Saudi regulatory compliance simultaneously, giving you a Brand Score + detailed report.",
+    about_desc: "A platform that makes all your company's content speak with one unified voice — whether it's written by marketing, sales, or support, your audience sees your content and instantly knows it's yours. Plus, it ensures compliance with Saudi regulations.",
+    about_f1_title: "One Voice for All Content",
+    about_f1_desc: "Checks every piece of content to ensure it reflects your brand identity — same tone, same terms, same style. Your audience recognizes you without seeing the logo.",
     about_f2_title: "Ready-to-Publish Version",
-    about_f2_desc: "Before/after comparison showing every change and why — a corrected version ready to publish with one click.",
-    about_f3_title: "Gets Smarter Over Time",
-    about_f3_desc: "Every check builds a stronger database — analysis becomes more accurate and smarter with every use.",
+    about_f2_desc: "Get a corrected version that matches your brand identity exactly — before/after comparison showing every change and why.",
+    about_f3_title: "Learns Your Style",
+    about_f3_desc: "The more you use it, the deeper it understands your brand voice — it learns your identity just like your own team does.",
     audience_title: "Who is this for?",
     aud_1_title: "Marketing & Content Teams",
-    aud_1_desc: "Ensure every post, ad, and email reflects your company's identity consistently before it goes live.",
+    aud_1_desc: "Multiple people writing content? ComplyKit ensures everyone writes with the same voice — your audience feels it all comes from one source.",
     aud_2_title: "Advertising Agencies",
-    aud_2_desc: "Managing content for multiple brands? Each has its own rules — ComplyKit ensures consistency for every client.",
+    aud_2_desc: "Managing content for multiple brands? Each brand has its own voice — ComplyKit keeps every client's identity intact without overlap.",
     aud_3_title: "Startups",
-    aud_3_desc: "Building your brand from scratch? ComplyKit helps you establish your identity from the very first piece of content.",
+    aud_3_desc: "Building your brand from scratch? Lock in your identity from day one — let your audience recognize you from the start.",
     aud_4_title: "Any Saudi Organization",
-    aud_4_desc: "Publishing digital content and need to comply with local regulations — PDPL, E-Commerce Law, and more.",
+    aud_4_desc: "Your content represents you to the world — ComplyKit ensures it's unified and compliant with Saudi regulations.",
     why_title: "Why ComplyKit?",
     why_without: "Without ComplyKit",
-    why_without_desc: "Manual review takes hours, mistakes slip through, inconsistent content, and risk of regulatory violations.",
+    why_without_desc: "Everyone writes differently, content looks inconsistent every time, your audience can't recognize your identity — plus risk of regulatory violations.",
     why_with: "With ComplyKit",
-    why_with_desc: "Automatic check in seconds, 100% brand consistency, Saudi regulatory compliance, and a corrected version ready to go.",
+    why_with_desc: "Unified content with one voice — anyone who sees your content knows it's your company. Automatic check in seconds + Saudi regulatory compliance.",
 
     // Footer
     footer_powered: "Powered by AI",
