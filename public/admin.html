@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ComplyKit — Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['IBM Plex Sans Arabic', 'Inter', 'sans-serif'] },
+          colors: {
+            brand: { 50:'#f0f7ff', 100:'#e0effe', 200:'#bae0fd', 300:'#7cc8fc', 400:'#36adf8', 500:'#0c93e9', 600:'#0074c7', 700:'#005ca1', 800:'#044f85', 900:'#08426e' },
+            dark: { 800:'#1a1a2e', 900:'#0f0f23', 950:'#0a0a1a' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { font-family: 'IBM Plex Sans Arabic', 'Inter', sans-serif; }
+    [lang="en"] * { font-family: 'Inter', 'IBM Plex Sans Arabic', sans-serif; }
+    body { transition: background 0.3s, color 0.3s; }
+    .glass { backdrop-filter: blur(10px); }
+    .fade-in { animation: fadeIn 0.4s ease-in; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+    .glow-card { transition: all 0.3s; }
+    .glow-card:hover { box-shadow: 0 0 30px rgba(12,147,233,0.15); border-color: rgba(12,147,233,0.3); }
+    .lang-toggle:hover, .theme-toggle:hover { background: rgba(255,255,255,0.1); }
+
+    /* DARK */
+    body.dark { background: #0a0a1a; color: #f3f4f6; }
+    body.dark .glass { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); }
+    body.dark .t-header { background: rgba(15,15,35,0.8); border-color: #1f2937; }
+    body.dark .t-text { color: #f3f4f6; }
+    body.dark .t-text-sec { color: #9ca3af; }
+    body.dark .t-text-muted { color: #6b7280; }
+    body.dark .t-border { border-color: #1f2937; }
+    body.dark .t-bg-tag { background: #1f2937; }
+    body.dark .t-row:hover { background: rgba(255,255,255,0.02); }
+    body.dark .t-footer { border-color: #1f2937; }
+    body.dark .t-btn { border-color: #374151; color: #d1d5db; }
+    body.dark .t-btn:hover { background: rgba(255,255,255,0.06); }
+
+    /* LIGHT */
+    body.light { background: #f8fafc; color: #1e293b; }
+    body.light .glass { background: rgba(255,255,255,0.8); border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    body.light .t-header { background: rgba(255,255,255,0.9); border-color: #e5e7eb; }
+    body.light .t-text { color: #1e293b; }
+    body.light .t-text-sec { color: #64748b; }
+    body.light .t-text-muted { color: #94a3b8; }
+    body.light .t-border { border-color: #e5e7eb; }
+    body.light .t-bg-tag { background: #e5e7eb; }
+    body.light .t-row:hover { background: rgba(0,0,0,0.02); }
+    body.light .t-footer { border-color: #e5e7eb; }
+    body.light .t-btn { border-color: #d1d5db; color: #4b5563; }
+    body.light .t-btn:hover { background: #f3f4f6; }
+    body.light .text-white { color: #1e293b !important; }
+    body.light .text-gray-300 { color: #475569 !important; }
+    body.light .text-gray-400 { color: #64748b !important; }
+    body.light .text-gray-500 { color: #94a3b8 !important; }
+    body.light .text-gray-600 { color: #94a3b8 !important; }
+    body.light .border-gray-700 { border-color: #d1d5db !important; }
+    body.light .border-gray-800 { border-color: #e5e7eb !important; }
+    body.light .bg-gray-800 { background: #e5e7eb !important; }
+  </style>
+  <script>
+    (function() {
+      const saved = localStorage.getItem('complykit-theme') || 'dark';
+      document.documentElement.style.background = saved === 'light' ? '#f8fafc' : '#0a0a1a';
+    })();
+  </script>
+</head>
+<body class="dark min-h-screen">
+
+  <!-- Header -->
+  <header class="border-b t-border t-header backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img id="header-logo" src="/logo-dark.svg" alt="ComplyKit" class="h-10" />
+        <span class="px-2 py-0.5 bg-red-500/10 text-red-400 rounded text-xs font-bold border border-red-500/20">ADMIN</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="/" class="t-btn px-4 py-2 rounded-lg text-sm border transition" data-i18n="adm_back">← الموقع الرئيسي</a>
+        <button onclick="loadAnalytics()" class="px-4 py-2 rounded-lg text-sm bg-brand-600/20 text-brand-400 border border-brand-500/20 hover:bg-brand-600/30 transition" data-i18n="adm_refresh">🔄 تحديث</button>
+        <button onclick="toggleTheme()" class="theme-toggle t-btn px-3 py-2 rounded-lg border text-sm transition" title="Toggle theme">
+          <span id="theme-icon">☀️</span>
+        </button>
+        <button onclick="toggleLang()" class="lang-toggle t-btn px-3 py-2 rounded-lg border text-sm transition">
+          <span>🌐</span> <span id="lang-label">EN</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 py-8 fade-in">
+
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold mb-2 t-text" data-i18n="adm_title">📊 لوحة تحكم الأدمن</h1>
+      <p class="t-text-sec" data-i18n="adm_desc">مراقبة الاستخدام والتحليلات وسجل النشاطات</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="glass rounded-2xl p-5 glow-card">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-2xl">🏢</span>
+          <span class="text-xs t-text-muted t-bg-tag px-2 py-1 rounded-full" data-i18n="adm_companies_tag">الشركات</span>
+        </div>
+        <div id="stat-companies" class="text-3xl font-bold text-brand-400">-</div>
+        <div class="text-xs t-text-muted mt-1" data-i18n="adm_companies_label">شركات مسجلة</div>
+      </div>
+      <div class="glass rounded-2xl p-5 glow-card">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-2xl">✅</span>
+          <span class="text-xs t-text-muted t-bg-tag px-2 py-1 rounded-full" data-i18n="adm_checks_tag">الفحوصات</span>
+        </div>
+        <div id="stat-checks" class="text-3xl font-bold text-green-400">-</div>
+        <div class="text-xs t-text-muted mt-1" data-i18n="adm_checks_label">إجمالي الفحوصات</div>
+      </div>
+      <div class="glass rounded-2xl p-5 glow-card">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-2xl">📋</span>
+          <span class="text-xs t-text-muted t-bg-tag px-2 py-1 rounded-full" data-i18n="adm_rules_tag">القواعد</span>
+        </div>
+        <div id="stat-rules" class="text-3xl font-bold text-purple-400">-</div>
+        <div class="text-xs t-text-muted mt-1" data-i18n="adm_rules_label">إجمالي القواعد</div>
+      </div>
+      <div class="glass rounded-2xl p-5 glow-card">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-2xl">📈</span>
+          <span class="text-xs t-text-muted t-bg-tag px-2 py-1 rounded-full" data-i18n="adm_avg_tag">المعدل</span>
+        </div>
+        <div id="stat-avg" class="text-3xl font-bold text-yellow-400">-</div>
+        <div class="text-xs t-text-muted mt-1" data-i18n="adm_avg_label">متوسط السكور</div>
+      </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div class="glass rounded-2xl p-6 glow-card">
+        <h3 class="text-lg font-bold t-text mb-4" data-i18n="adm_chart_timeline">📈 الفحوصات خلال آخر 7 أيام</h3>
+        <div class="h-56"><canvas id="chart-timeline"></canvas></div>
+      </div>
+      <div class="glass rounded-2xl p-6 glow-card">
+        <h3 class="text-lg font-bold t-text mb-4" data-i18n="adm_chart_violations">🚨 المخالفات حسب الفئة</h3>
+        <div class="h-56"><canvas id="chart-violations"></canvas></div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="glass rounded-2xl p-6 glow-card">
+        <h3 class="text-lg font-bold t-text mb-4" data-i18n="adm_chart_companies">🏢 الفحوصات لكل شركة</h3>
+        <div class="h-48"><canvas id="chart-companies"></canvas></div>
+      </div>
+      <div class="glass rounded-2xl p-6 glow-card">
+        <h3 class="text-lg font-bold t-text mb-4" data-i18n="adm_chart_severity">⚠️ توزيع درجة الخطورة</h3>
+        <div class="h-48"><canvas id="chart-severity"></canvas></div>
+      </div>
+      <div class="glass rounded-2xl p-6 glow-card">
+        <h3 class="text-lg font-bold t-text mb-4" data-i18n="adm_chart_scores">🎯 متوسط السكور لكل شركة</h3>
+        <div class="h-48"><canvas id="chart-scores"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Companies Table -->
+    <div class="glass rounded-2xl p-6 mb-8 glow-card">
+      <h3 class="text-lg font-bold t-text mb-4" data-i18n="adm_table_companies">🏢 الشركات المسجلة</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-gray-700">
+              <th class="text-right py-3 px-4 t-text-sec font-medium" data-i18n="adm_th_company">الشركة</th>
+              <th class="text-right py-3 px-4 t-text-sec font-medium" data-i18n="adm_th_rules">القواعد</th>
+              <th class="text-right py-3 px-4 t-text-sec font-medium" data-i18n="adm_th_checks">عدد الفحوصات</th>
+              <th class="text-right py-3 px-4 t-text-sec font-medium" data-i18n="adm_th_avg_score">متوسط السكور</th>
+              <th class="text-right py-3 px-4 t-text-sec font-medium" data-i18n="adm_th_date">تاريخ التسجيل</th>
+            </tr>
+          </thead>
+          <tbody id="companies-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Recent Checks -->
+    <div class="glass rounded-2xl p-6 mb-8 glow-card">
+      <h3 class="text-lg font-bold t-text mb-4" data-i18n="adm_table_checks">🕐 آخر الفحوصات</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-gray-700">
+              <th class="text-right py-3 px-4 t-text-sec font-medium" data-i18n="adm_th_company">الشركة</th>
+              <th class="text-right py-3 px-4 t-text-sec font-medium" data-i18n="adm_th_score">السكور</th>
+              <th class="text-right py-3 px-4 t-text-sec font-medium" data-i18n="adm_th_passed">ناجح</th>
+              <th class="text-right py-3 px-4 t-text-sec font-medium" data-i18n="adm_th_violations">مخالفات</th>
+              <th class="text-right py-3 px-4 t-text-sec font-medium" data-i18n="adm_th_content">المحتوى</th>
+              <th class="text-right py-3 px-4 t-text-sec font-medium" data-i18n="adm_th_time">الوقت</th>
+            </tr>
+          </thead>
+          <tbody id="checks-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Activity Log -->
+    <div class="glass rounded-2xl p-6 glow-card">
+      <h3 class="text-lg font-bold t-text mb-4" data-i18n="adm_activity_title">📜 سجل النشاطات</h3>
+      <div id="activity-log" class="space-y-2 max-h-96 overflow-y-auto"></div>
+    </div>
+
+  </main>
+
+  <footer class="border-t t-footer mt-16 py-6">
+    <div class="max-w-7xl mx-auto px-6 text-center text-sm t-text-muted">
+      ComplyKit Admin Dashboard &copy; 2026 — مي معافا & آلاء معافا
+    </div>
+  </footer>
+
+  <script>
+    // ============ I18N ============
+    const tr = {
+      ar: {
+        adm_back: "← الموقع الرئيسي",
+        adm_refresh: "🔄 تحديث",
+        adm_title: "📊 لوحة تحكم الأدمن",
+        adm_desc: "مراقبة الاستخدام والتحليلات وسجل النشاطات",
+        adm_companies_tag: "الشركات", adm_companies_label: "شركات مسجلة",
+        adm_checks_tag: "الفحوصات", adm_checks_label: "إجمالي الفحوصات",
+        adm_rules_tag: "القواعد", adm_rules_label: "إجمالي القواعد",
+        adm_avg_tag: "المعدل", adm_avg_label: "متوسط السكور",
+        adm_chart_timeline: "📈 الفحوصات خلال آخر 7 أيام",
+        adm_chart_violations: "🚨 المخالفات حسب الفئة",
+        adm_chart_companies: "🏢 الفحوصات لكل شركة",
+        adm_chart_severity: "⚠️ توزيع درجة الخطورة",
+        adm_chart_scores: "🎯 متوسط السكور لكل شركة",
+        adm_table_companies: "🏢 الشركات المسجلة",
+        adm_table_checks: "🕐 آخر الفحوصات",
+        adm_th_company: "الشركة", adm_th_rules: "القواعد", adm_th_checks: "عدد الفحوصات",
+        adm_th_avg_score: "متوسط السكور", adm_th_date: "تاريخ التسجيل",
+        adm_th_score: "السكور", adm_th_passed: "ناجح", adm_th_violations: "مخالفات",
+        adm_th_content: "المحتوى", adm_th_time: "الوقت",
+        adm_activity_title: "📜 سجل النشاطات",
+        adm_no_checks: "لا توجد فحوصات بعد",
+        adm_no_activity: "لا توجد نشاطات مسجلة بعد",
+        adm_act_check: "فحص محتوى", adm_act_add: "إضافة شركة", adm_act_delete: "حذف شركة",
+        adm_score: "سكور", adm_violations_lbl: "مخالفات", adm_rule_word: "قاعدة",
+        cat_tone: "النبرة", cat_vocabulary: "المصطلحات", cat_formatting: "التنسيق",
+        cat_structure: "الهيكل", cat_brand_identity: "الهوية", cat_compliance: "الأنظمة", cat_content_rules: "المحتوى",
+        sev_high: "عالية 🔴", sev_medium: "متوسطة 🟡", sev_low: "منخفضة 🟢",
+        chart_checks: "الفحوصات", chart_violations_lbl: "عدد المخالفات", chart_avg_score: "متوسط السكور",
+      },
+      en: {
+        adm_back: "← Main Site",
+        adm_refresh: "🔄 Refresh",
+        adm_title: "📊 Admin Dashboard",
+        adm_desc: "Monitor usage, analytics, and activity logs",
+        adm_companies_tag: "Companies", adm_companies_label: "Registered Companies",
+        adm_checks_tag: "Checks", adm_checks_label: "Total Checks",
+        adm_rules_tag: "Rules", adm_rules_label: "Total Rules",
+        adm_avg_tag: "Average", adm_avg_label: "Average Score",
+        adm_chart_timeline: "📈 Checks Over Last 7 Days",
+        adm_chart_violations: "🚨 Violations by Category",
+        adm_chart_companies: "🏢 Checks Per Company",
+        adm_chart_severity: "⚠️ Severity Distribution",
+        adm_chart_scores: "🎯 Average Score Per Company",
+        adm_table_companies: "🏢 Registered Companies",
+        adm_table_checks: "🕐 Recent Checks",
+        adm_th_company: "Company", adm_th_rules: "Rules", adm_th_checks: "Checks",
+        adm_th_avg_score: "Avg Score", adm_th_date: "Registered",
+        adm_th_score: "Score", adm_th_passed: "Passed", adm_th_violations: "Violations",
+        adm_th_content: "Content", adm_th_time: "Time",
+        adm_activity_title: "📜 Activity Log",
+        adm_no_checks: "No checks yet",
+        adm_no_activity: "No activity recorded yet",
+        adm_act_check: "Content Check", adm_act_add: "Company Added", adm_act_delete: "Company Deleted",
+        adm_score: "Score", adm_violations_lbl: "Violations", adm_rule_word: "rules",
+        cat_tone: "Tone", cat_vocabulary: "Vocabulary", cat_formatting: "Formatting",
+        cat_structure: "Structure", cat_brand_identity: "Brand Identity", cat_compliance: "Compliance", cat_content_rules: "Content Rules",
+        sev_high: "High 🔴", sev_medium: "Medium 🟡", sev_low: "Low 🟢",
+        chart_checks: "Checks", chart_violations_lbl: "Violations", chart_avg_score: "Avg Score",
+      }
+    };
+
+    let lang = localStorage.getItem("complykit-lang") || "ar";
+    function t(k) { return tr[lang]?.[k] || tr["ar"]?.[k] || k; }
+
+    function applyI18n() {
+      const html = document.documentElement;
+      html.lang = lang;
+      html.dir = lang === "ar" ? "rtl" : "ltr";
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        el.textContent = t(el.getAttribute("data-i18n"));
+      });
+      // Fix table alignment for LTR
+      document.querySelectorAll("th, td").forEach(el => {
+        el.style.textAlign = lang === "ar" ? "right" : "left";
+      });
+      document.getElementById("lang-label").textContent = lang === "ar" ? "EN" : "عربي";
+    }
+
+    function toggleLang() {
+      lang = lang === "ar" ? "en" : "ar";
+      localStorage.setItem("complykit-lang", lang);
+      applyI18n();
+      loadAnalytics(); // reload charts with new labels
+    }
+
+    // ============ THEME ============
+    function applyTheme(theme) {
+      document.body.classList.remove('dark', 'light');
+      document.body.classList.add(theme);
+      document.getElementById('theme-icon').textContent = theme === 'dark' ? '☀️' : '🌙';
+      const logo = document.getElementById('header-logo');
+      if (logo) logo.src = theme === 'dark' ? '/logo-dark.svg' : '/logo-light.svg';
+      // Update chart colors
+      if (theme === 'light') {
+        Chart.defaults.color = "#64748b";
+        Chart.defaults.borderColor = "rgba(0,0,0,0.08)";
+      } else {
+        Chart.defaults.color = "#9ca3af";
+        Chart.defaults.borderColor = "rgba(255,255,255,0.08)";
+      }
+    }
+
+    function toggleTheme() {
+      const isDark = document.body.classList.contains('dark');
+      const newTheme = isDark ? 'light' : 'dark';
+      applyTheme(newTheme);
+      localStorage.setItem('complykit-theme', newTheme);
+      loadAnalytics(); // re-render charts with correct colors
+    }
+
+    // Init theme
+    const savedTheme = localStorage.getItem('complykit-theme') || 'dark';
+    applyTheme(savedTheme);
+
+    // ============ ANALYTICS ============
+    let charts = {};
+    let cachedData = null;
+
+    async function loadAnalytics() {
+      try {
+        const res = await fetch("/api/admin/analytics");
+        cachedData = await res.json();
+        renderStats(cachedData.stats);
+        renderCharts(cachedData);
+        renderCompaniesTable(cachedData);
+        renderChecksTable(cachedData.recentChecks);
+        renderActivityLog(cachedData.recentActivity);
+      } catch (err) {
+        console.error("Failed to load analytics:", err);
+      }
+    }
+
+    function renderStats(stats) {
+      document.getElementById("stat-companies").textContent = stats.totalCompanies;
+      document.getElementById("stat-checks").textContent = stats.totalChecks;
+      document.getElementById("stat-rules").textContent = stats.totalRules;
+      document.getElementById("stat-avg").textContent = stats.avgScore + "%";
+    }
+
+    function renderCharts(data) {
+      Object.values(charts).forEach(c => c.destroy());
+      charts = {};
+
+      const isLight = document.body.classList.contains('light');
+
+      // Timeline
+      charts.timeline = new Chart(document.getElementById("chart-timeline"), {
+        type: "line",
+        data: {
+          labels: Object.keys(data.checksOverTime).map(d => d.slice(5)),
+          datasets: [{ label: t("chart_checks"), data: Object.values(data.checksOverTime), borderColor: "#0c93e9", backgroundColor: "rgba(12,147,233,0.1)", fill: true, tension: 0.4, pointBackgroundColor: "#0c93e9", pointRadius: 4 }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+      });
+
+      // Violations
+      const catMap = { tone: t("cat_tone"), vocabulary: t("cat_vocabulary"), formatting: t("cat_formatting"), structure: t("cat_structure"), brand_identity: t("cat_brand_identity"), compliance: t("cat_compliance"), content_rules: t("cat_content_rules") };
+      const vioKeys = Object.keys(data.violationsByCategory);
+      const vioColors = ["#ef4444", "#f59e0b", "#8b5cf6", "#0c93e9", "#10b981", "#ec4899", "#f97316"];
+      charts.violations = new Chart(document.getElementById("chart-violations"), {
+        type: "bar",
+        data: { labels: vioKeys.map(k => catMap[k] || k), datasets: [{ label: t("chart_violations_lbl"), data: Object.values(data.violationsByCategory), backgroundColor: vioColors.slice(0, vioKeys.length).map(c => c + "33"), borderColor: vioColors.slice(0, vioKeys.length), borderWidth: 1, borderRadius: 6 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+      });
+
+      // Companies doughnut
+      charts.companies = new Chart(document.getElementById("chart-companies"), {
+        type: "doughnut",
+        data: { labels: Object.keys(data.checksPerCompany), datasets: [{ data: Object.values(data.checksPerCompany), backgroundColor: ["#0c93e9", "#8b5cf6", "#10b981", "#f59e0b", "#ef4444"], borderWidth: 0 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: "bottom", labels: { boxWidth: 12, padding: 8 } } } }
+      });
+
+      // Severity
+      charts.severity = new Chart(document.getElementById("chart-severity"), {
+        type: "doughnut",
+        data: { labels: [t("sev_high"), t("sev_medium"), t("sev_low")], datasets: [{ data: [data.severityBreakdown.high, data.severityBreakdown.medium, data.severityBreakdown.low], backgroundColor: ["rgba(239,68,68,0.7)", "rgba(245,158,11,0.7)", "rgba(34,197,94,0.7)"], borderWidth: 0 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: "bottom", labels: { boxWidth: 12, padding: 8 } } } }
+      });
+
+      // Scores
+      const scoreVals = Object.values(data.scoresPerCompany);
+      charts.scores = new Chart(document.getElementById("chart-scores"), {
+        type: "bar",
+        data: { labels: Object.keys(data.scoresPerCompany), datasets: [{ label: t("chart_avg_score"), data: scoreVals, backgroundColor: scoreVals.map(v => v >= 80 ? "rgba(34,197,94,0.5)" : v >= 50 ? "rgba(245,158,11,0.5)" : "rgba(239,68,68,0.5)"), borderColor: scoreVals.map(v => v >= 80 ? "#22c55e" : v >= 50 ? "#f59e0b" : "#ef4444"), borderWidth: 1, borderRadius: 6 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100 } } }
+      });
+    }
+
+    function renderCompaniesTable(data) {
+      const locale = lang === "ar" ? "ar-SA" : "en-US";
+      document.getElementById("companies-table").innerHTML = data.companies.map(c => {
+        const checks = data.checksPerCompany[c.name] || 0;
+        const score = data.scoresPerCompany[c.name] || "-";
+        const scoreColor = typeof score === "number" ? (score >= 80 ? "text-green-400" : score >= 50 ? "text-yellow-400" : "text-red-400") : "t-text-muted";
+        const date = new Date(c.createdAt).toLocaleDateString(locale, { year: "numeric", month: "short", day: "numeric" });
+        return `<tr class="border-b border-gray-800 t-row transition">
+          <td class="py-3 px-4"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500/20 to-brand-700/20 flex items-center justify-center text-sm font-bold text-brand-400">${c.name.charAt(0)}</div><span class="font-medium t-text">${c.name}</span></div></td>
+          <td class="py-3 px-4 t-text-sec">${c.rules}</td>
+          <td class="py-3 px-4 t-text-sec">${checks}</td>
+          <td class="py-3 px-4 ${scoreColor} font-bold">${typeof score === "number" ? score + "%" : score}</td>
+          <td class="py-3 px-4 t-text-muted">${date}</td>
+        </tr>`;
+      }).join("");
+    }
+
+    function renderChecksTable(checks) {
+      const tbody = document.getElementById("checks-table");
+      const locale = lang === "ar" ? "ar-SA" : "en-US";
+      if (!checks.length) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center t-text-muted">${t("adm_no_checks")}</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = checks.map(c => {
+        const scoreColor = c.score >= 80 ? "text-green-400" : c.score >= 50 ? "text-yellow-400" : "text-red-400";
+        const time = new Date(c.checkedAt).toLocaleString(locale, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+        return `<tr class="border-b border-gray-800 t-row transition">
+          <td class="py-3 px-4 font-medium t-text">${c.companyName}</td>
+          <td class="py-3 px-4 ${scoreColor} font-bold">${c.score}%</td>
+          <td class="py-3 px-4 text-green-400">${c.passed}</td>
+          <td class="py-3 px-4 text-red-400">${c.violations}</td>
+          <td class="py-3 px-4 t-text-sec max-w-[200px] truncate">${c.preview || ""}</td>
+          <td class="py-3 px-4 t-text-muted text-xs">${time}</td>
+        </tr>`;
+      }).join("");
+    }
+
+    function renderActivityLog(activity) {
+      const container = document.getElementById("activity-log");
+      const locale = lang === "ar" ? "ar-SA" : "en-US";
+      if (!activity.length) {
+        container.innerHTML = `<div class="text-center t-text-muted py-8">${t("adm_no_activity")}</div>`;
+        return;
+      }
+      const actionMap = {
+        content_checked: { icon: "✅", key: "adm_act_check", color: "text-green-400" },
+        company_added: { icon: "➕", key: "adm_act_add", color: "text-brand-400" },
+        checklist_deleted: { icon: "🗑️", key: "adm_act_delete", color: "text-red-400" },
+      };
+      container.innerHTML = activity.map(a => {
+        const info = actionMap[a.action] || { icon: "📌", key: a.action, color: "t-text-sec" };
+        const time = new Date(a.timestamp).toLocaleString(locale, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+        let detail = "";
+        if (a.companyName) detail += `<span class="t-text font-medium">${a.companyName}</span>`;
+        if (a.score !== undefined) detail += ` — ${t("adm_score")}: <span class="${a.score >= 80 ? "text-green-400" : a.score >= 50 ? "text-yellow-400" : "text-red-400"} font-bold">${a.score}%</span>`;
+        if (a.violations !== undefined) detail += ` — ${t("adm_violations_lbl")}: <span class="text-red-400">${a.violations}</span>`;
+        if (a.totalRules) detail += ` — ${a.totalRules} ${t("adm_rule_word")}`;
+        return `<div class="flex items-center gap-3 py-2.5 px-3 rounded-lg t-row transition border-b border-gray-800/50">
+          <span class="text-lg">${info.icon}</span>
+          <div class="flex-1 min-w-0"><span class="${info.color} text-sm font-medium">${t(info.key)}</span> <span class="t-text-sec text-sm">${detail}</span></div>
+          <span class="text-xs t-text-muted whitespace-nowrap">${time}</span>
+        </div>`;
+      }).join("");
+    }
+
+    // ============ INIT ============
+    applyI18n();
+    loadAnalytics();
+  </script>
+
+</body>
+</html>

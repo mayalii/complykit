@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ComplyKit — Brand Consistency + Saudi Compliance</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['IBM Plex Sans Arabic', 'Inter', 'sans-serif'],
+            en: ['Inter', 'sans-serif']
+          },
+          colors: {
+            brand: { 50:'#f0f7ff', 100:'#e0effe', 200:'#bae0fd', 300:'#7cc8fc', 400:'#36adf8', 500:'#0c93e9', 600:'#0074c7', 700:'#005ca1', 800:'#044f85', 900:'#08426e' },
+            dark: { 800:'#1a1a2e', 900:'#0f0f23', 950:'#0a0a1a' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { font-family: 'IBM Plex Sans Arabic', 'Inter', sans-serif; }
+    [lang="en"] * { font-family: 'Inter', 'IBM Plex Sans Arabic', sans-serif; }
+    .page { display: none; }
+    .page.active { display: block; }
+    .fade-in { animation: fadeIn 0.3s ease-in; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+    .loading-dots::after { content: ''; animation: dots 1.5s infinite; }
+    @keyframes dots { 0%{content:'.'} 33%{content:'..'} 66%{content:'...'} }
+    textarea:focus, input:focus, select:focus { outline: none; box-shadow: 0 0 0 3px rgba(12,147,233,0.2); }
+    .lang-toggle, .theme-toggle { cursor: pointer; user-select: none; }
+    .lang-toggle:hover, .theme-toggle:hover { background: rgba(255,255,255,0.1); }
+    .pulse-glow { animation: pulseGlow 2s ease-in-out infinite; }
+    @keyframes pulseGlow { 0%,100%{ box-shadow: 0 0 20px rgba(12,147,233,0.1); } 50%{ box-shadow: 0 0 40px rgba(12,147,233,0.25); } }
+
+    /* ===== DARK THEME (default) ===== */
+    body { transition: background 0.3s, color 0.3s; }
+    body.dark { background: #0a0a1a; color: #f3f4f6; }
+    body.dark .nav-btn.active { background: rgba(12,147,233,0.15); color: #0c93e9; border-color: #0c93e9; }
+    body.dark .severity-high { color: #ef4444; background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.2); }
+    body.dark .severity-medium { color: #f59e0b; background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.2); }
+    body.dark .severity-low { color: #22c55e; background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.2); }
+    body.dark .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.08); }
+    body.dark .t-header { background: rgba(15,15,35,0.8); border-color: #1f2937; }
+    body.dark .t-card-bg { background: rgba(15,15,35,0.5); }
+    body.dark .t-input { background: #0f0f23; border-color: #374151; color: white; }
+    body.dark .t-border { border-color: #1f2937; }
+    body.dark .t-text-primary { color: #ffffff; }
+    body.dark .t-text-secondary { color: #9ca3af; }
+    body.dark .t-text-muted { color: #6b7280; }
+    body.dark .t-footer { border-color: #1f2937; }
+
+    /* ===== LIGHT THEME ===== */
+    body.light { background: #f8fafc; color: #1e293b; }
+    body.light .nav-btn { border-color: #d1d5db; color: #4b5563; }
+    body.light .nav-btn:hover { background: #f3f4f6; }
+    body.light .nav-btn.active { background: rgba(12,147,233,0.1); color: #0c93e9; border-color: #0c93e9; }
+    body.light .severity-high { color: #dc2626; background: rgba(239,68,68,0.06); border-color: rgba(239,68,68,0.15); }
+    body.light .severity-medium { color: #d97706; background: rgba(245,158,11,0.06); border-color: rgba(245,158,11,0.15); }
+    body.light .severity-low { color: #16a34a; background: rgba(34,197,94,0.06); border-color: rgba(34,197,94,0.15); }
+    body.light .glass { background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    body.light .t-header { background: rgba(255,255,255,0.9); border-color: #e5e7eb; }
+    body.light .t-card-bg { background: #ffffff; }
+    body.light .t-input { background: #ffffff; border-color: #d1d5db; color: #1e293b; }
+    body.light .t-input::placeholder { color: #9ca3af; }
+    body.light .t-border { border-color: #e5e7eb; }
+    body.light .t-text-primary { color: #1e293b; }
+    body.light .t-text-secondary { color: #64748b; }
+    body.light .t-text-muted { color: #94a3b8; }
+    body.light .t-footer { border-color: #e5e7eb; }
+    body.light .lang-toggle, body.light .theme-toggle { border-color: #d1d5db; color: #4b5563; }
+    body.light .lang-toggle:hover, body.light .theme-toggle:hover { background: #f3f4f6; }
+    body.light .bg-dark-900 { background: #f1f5f9 !important; }
+    body.light .bg-dark-900\/50 { background: rgba(241,245,249,0.5) !important; }
+    body.light .bg-dark-950 { background: #f8fafc !important; }
+    body.light .border-gray-700 { border-color: #d1d5db !important; }
+    body.light .border-gray-800 { border-color: #e5e7eb !important; }
+    body.light .text-white { color: #1e293b !important; }
+    body.light .text-gray-100 { color: #1e293b !important; }
+    body.light .text-gray-200 { color: #334155 !important; }
+    body.light .text-gray-300 { color: #475569 !important; }
+    body.light .text-gray-400 { color: #64748b !important; }
+    body.light .text-gray-500 { color: #94a3b8 !important; }
+    body.light .text-gray-600 { color: #94a3b8 !important; }
+    body.light .border-white\/5 { border-color: rgba(0,0,0,0.06) !important; }
+    body.light .border-white\/20 { border-color: rgba(0,0,0,0.1) !important; }
+    body.light .bg-white\/10 { background: rgba(0,0,0,0.04) !important; }
+    body.light .bg-white\/20 { background: rgba(0,0,0,0.06) !important; }
+    body.light .hover\:bg-gray-800:hover { background: #f3f4f6 !important; }
+    body.light .bg-dark-900\/80 { background: rgba(255,255,255,0.9) !important; }
+    body.light #loading-overlay { background: rgba(248,250,252,0.85) !important; }
+  </style>
+  <script>
+    // Apply saved theme before render to prevent flash
+    (function() {
+      const saved = localStorage.getItem('complykit-theme') || 'dark';
+      document.documentElement.style.background = saved === 'light' ? '#f8fafc' : '#0a0a1a';
+    })();
+  </script>
+</head>
+<body class="dark min-h-screen">
+
+  <!-- Header -->
+  <header class="border-b border-gray-800 bg-dark-900/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img id="header-logo" src="/logo-dark.svg" alt="ComplyKit" class="h-10" />
+        <p class="text-xs text-gray-500" data-i18n="subtitle">تناسق البراند + توافق الأنظمة</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <nav class="flex gap-2">
+          <button onclick="showPage('dashboard')" id="nav-dashboard" class="nav-btn px-4 py-2 rounded-lg text-sm border border-gray-700 hover:bg-gray-800 transition">
+            <span data-i18n="nav_dashboard">📊 لوحة التحكم</span>
+          </button>
+          <button onclick="showPage('onboarding')" id="nav-onboarding" class="nav-btn px-4 py-2 rounded-lg text-sm border border-gray-700 hover:bg-gray-800 transition">
+            <span data-i18n="nav_onboarding">➕ إضافة شركة</span>
+          </button>
+          <button onclick="showPage('check')" id="nav-check" class="nav-btn px-4 py-2 rounded-lg text-sm border border-gray-700 hover:bg-gray-800 transition">
+            <span data-i18n="nav_check">✅ فحص المحتوى</span>
+          </button>
+          <button onclick="showPage('history')" id="nav-history" class="nav-btn px-4 py-2 rounded-lg text-sm border border-gray-700 hover:bg-gray-800 transition">
+            <span data-i18n="nav_history">📜 السجل</span>
+          </button>
+        </nav>
+        <!-- User Company Badge -->
+        <div id="user-company-badge" class="hidden flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-600/10 border border-brand-500/20">
+          <div class="w-6 h-6 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white text-xs font-bold" id="user-avatar-letter">م</div>
+          <span id="user-company-name" class="text-sm font-medium text-brand-400"></span>
+          <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+        </div>
+        <!-- Theme Toggle -->
+        <button onclick="toggleTheme()" class="theme-toggle flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-700 text-sm text-gray-300 transition" title="Toggle theme">
+          <span id="theme-icon">☀️</span>
+        </button>
+        <!-- Language Toggle -->
+        <button onclick="toggleLang()" class="lang-toggle flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-700 text-sm text-gray-300 transition">
+          <span id="lang-icon">🌐</span>
+          <span id="lang-label">EN</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-6 py-8">
+
+    <!-- ============ DASHBOARD PAGE ============ -->
+    <div id="page-dashboard" class="page active fade-in">
+
+      <!-- Hero Section -->
+      <div id="hero-section" class="relative overflow-hidden rounded-3xl mb-8 p-8 md:p-12" style="background: linear-gradient(135deg, #0a1628 0%, #0c2d5e 50%, #0c93e9 100%);">
+        <div class="absolute top-0 left-0 w-full h-full opacity-10">
+          <div class="absolute top-10 left-10 w-32 h-32 rounded-full bg-white/20 blur-3xl"></div>
+          <div class="absolute bottom-10 right-20 w-48 h-48 rounded-full bg-brand-400/30 blur-3xl"></div>
+        </div>
+        <div class="relative z-10">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="px-3 py-1 bg-white/15 text-white rounded-full text-xs font-medium border border-white/20">AI-Powered</span>
+          </div>
+          <h2 class="text-3xl md:text-4xl font-bold text-white mb-3" style="color:#fff !important" data-i18n="hero_title">محتوى متناسق،<br/>ومتوافق مع الأنظمة.</h2>
+          <p class="text-lg mb-6 max-w-xl" style="color: rgba(255,255,255,0.85) !important" data-i18n="hero_desc">أول منصة سعودية تضمن إن محتواك يعكس هوية شركتك ويتوافق مع الأنظمة المحلية — فحص مزدوج بالذكاء الاصطناعي قبل النشر.</p>
+          <div class="flex gap-3">
+            <button onclick="showPage('onboarding')" class="px-6 py-3 bg-white rounded-xl font-bold hover:bg-gray-100 transition" style="color:#0a1628 !important">
+              <span data-i18n="hero_btn_add">➕ أضف شركة جديدة</span>
+            </button>
+            <button onclick="showPage('check')" class="px-6 py-3 bg-white/15 rounded-xl font-medium hover:bg-white/25 transition border border-white/30" style="color:#fff !important">
+              <span data-i18n="hero_btn_check">✅ افحص محتوى</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Row -->
+      <div id="stats-row" class="hidden grid grid-cols-3 gap-4 mb-8">
+        <div class="glass rounded-2xl p-5 text-center">
+          <div id="stat-checklists" class="text-3xl font-bold text-brand-400">0</div>
+          <div class="text-sm text-gray-400 mt-1" data-i18n="stat_checklists">قوائم الفحص</div>
+        </div>
+        <div class="glass rounded-2xl p-5 text-center">
+          <div id="stat-rules" class="text-3xl font-bold text-green-400">0</div>
+          <div class="text-sm text-gray-400 mt-1" data-i18n="stat_rules">إجمالي القواعد</div>
+        </div>
+        <div class="glass rounded-2xl p-5 text-center">
+          <div id="stat-companies" class="text-3xl font-bold text-purple-400">0</div>
+          <div class="text-sm text-gray-400 mt-1" data-i18n="stat_companies">شركات مسجلة</div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-200" data-i18n="saved_checklists">قوائم الفحص المحفوظة</h3>
+      </div>
+
+      <div id="checklists-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+
+      <div id="empty-state" class="hidden text-center py-16">
+        <div class="text-6xl mb-4">📋</div>
+        <h3 class="text-xl font-semibold mb-2 text-gray-300" data-i18n="empty_title">لا توجد قوائم فحص بعد</h3>
+        <p class="text-gray-500 mb-6" data-i18n="empty_desc">ابدأ بإضافة دليل أسلوب شركتك</p>
+        <button onclick="showPage('onboarding')" class="px-6 py-3 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-medium transition">
+          <span data-i18n="empty_btn">➕ أضف أول قائمة فحص</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ============ ONBOARDING PAGE ============ -->
+    <div id="page-onboarding" class="page fade-in">
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold mb-2" data-i18n="onb_title">إضافة شركة جديدة</h2>
+        <p class="text-gray-400" data-i18n="onb_desc">أرسل دليل الأسلوب أو أمثلة محتوى وسنستخلص قائمة الفحص تلقائياً</p>
+      </div>
+
+      <div class="max-w-3xl">
+        <div class="glass rounded-2xl p-6 mb-6">
+          <label class="block text-sm font-medium text-gray-300 mb-2" data-i18n="onb_company_label">اسم الشركة *</label>
+          <input id="companyName" type="text" data-i18n-placeholder="onb_company_ph"
+            placeholder="مثال: أرامكو، STC، نيوم..."
+            class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 transition">
+        </div>
+
+        <div class="glass rounded-2xl p-6 mb-6">
+          <label class="block text-sm font-medium text-gray-300 mb-2" data-i18n="onb_guidelines_label">دليل الأسلوب / Brand Guidelines</label>
+          <p class="text-xs text-gray-500 mb-3" data-i18n="onb_guidelines_hint">الصق نص دليل الأسلوب هنا أو ارفع ملفات</p>
+
+          <!-- File Upload Area -->
+          <div id="upload-area" class="border-2 border-dashed border-gray-600 hover:border-brand-500 rounded-xl p-6 mb-4 text-center cursor-pointer transition">
+            <div class="text-4xl mb-2">📁</div>
+            <p class="text-gray-300 text-sm font-medium" data-i18n="onb_upload_title">اسحب الملفات هنا أو اضغط للرفع</p>
+            <p class="text-gray-500 text-xs mt-1" data-i18n="onb_upload_formats">يدعم: TXT, PDF, صور (PNG, JPG), JSON</p>
+            <input id="file-input" type="file" multiple accept=".txt,.pdf,.png,.jpg,.jpeg,.json,.doc,.docx" class="hidden">
+          </div>
+
+          <!-- Uploaded Files Preview -->
+          <div id="uploaded-files" class="hidden mb-4 space-y-2"></div>
+
+          <textarea id="guidelinesText" rows="6" data-i18n-placeholder="onb_guidelines_ph"
+            placeholder="مثال: نستخدم لغة رسمية واحترافية. نتجنب المصطلحات العامية. نكتب اسم الشركة بالإنجليزية دائماً..."
+            class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 transition resize-y"></textarea>
+        </div>
+
+        <div class="glass rounded-2xl p-6 mb-6">
+          <label class="block text-sm font-medium text-gray-300 mb-2" data-i18n="onb_sample_label">أمثلة محتوى (اختياري)</label>
+          <p class="text-xs text-gray-500 mb-3" data-i18n="onb_sample_hint">الصق أمثلة محتوى ناجح — سنحلل الأسلوب منه</p>
+          <textarea id="sampleContent" rows="6" data-i18n-placeholder="onb_sample_ph"
+            placeholder="الصق هنا محتوى سوشال ميديا، إعلانات، أو أي نص تريد أن يتعلم الذكاء الاصطناعي أسلوبه..."
+            class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 transition resize-y"></textarea>
+        </div>
+
+        <button onclick="extractChecklist()" id="btn-extract"
+          class="w-full py-4 bg-gradient-to-l from-brand-600 to-brand-700 hover:from-brand-500 hover:to-brand-600 text-white rounded-xl font-bold text-lg transition transform hover:scale-[1.01]">
+          <span data-i18n="onb_extract_btn">🔍 استخلص قائمة الفحص</span>
+        </button>
+
+        <!-- Extraction Result -->
+        <div id="extraction-result" class="hidden mt-8 glass rounded-2xl p-6 fade-in">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-bold text-brand-400" data-i18n="onb_result_title">✅ تم استخلاص قائمة الفحص!</h3>
+            <span id="rules-count" class="text-sm bg-brand-600/20 text-brand-400 px-3 py-1 rounded-full"></span>
+          </div>
+          <div id="extraction-details"></div>
+          <button onclick="showPage('dashboard')" class="mt-4 px-6 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg transition">
+            <span data-i18n="onb_back_btn">← العودة للوحة التحكم</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ CONTENT CHECK PAGE ============ -->
+    <div id="page-check" class="page fade-in">
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold mb-2" data-i18n="chk_title">فحص المحتوى</h2>
+        <p class="text-gray-400" data-i18n="chk_desc">الصق محتواك وسنفحصه مقابل قواعد البراند والأنظمة السعودية</p>
+      </div>
+
+      <div class="max-w-4xl">
+        <!-- Company Account Banner (user is logged in) -->
+        <div id="company-banner" class="glass rounded-2xl p-5 mb-6 flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-xl font-bold text-white" id="banner-avatar-letter">م</div>
+          <div class="flex-1">
+            <div class="text-xs text-gray-500 mb-0.5" data-i18n="chk_logged_as">مسجل دخول كـ</div>
+            <div id="company-banner-name" class="text-lg font-bold text-white"></div>
+            <div id="company-banner-rules" class="text-sm text-gray-400"></div>
+          </div>
+          <div class="flex flex-col items-end gap-1">
+            <div class="text-xs text-green-400 bg-green-500/10 px-3 py-1.5 rounded-full border border-green-500/20 flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
+              <span data-i18n="chk_connected">متصل</span>
+            </div>
+          </div>
+        </div>
+        <!-- Hidden select for backwards compat -->
+        <select id="checklist-select" class="hidden"></select>
+
+        <div class="glass rounded-2xl p-6 mb-6">
+          <label class="block text-sm font-medium text-gray-300 mb-3" data-i18n="chk_content_label">المحتوى المراد فحصه</label>
+          <textarea id="content-to-check" rows="8" data-i18n-placeholder="chk_content_ph"
+            placeholder="الصق المحتوى هنا... (بوست سوشال ميديا، إعلان، إيميل، مقال)"
+            class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 transition resize-y"></textarea>
+        </div>
+
+        <!-- Downloads Section -->
+        <div id="downloads-section" class="hidden glass rounded-2xl p-6 mb-6 border border-brand-400/20">
+          <h3 class="text-lg font-bold text-brand-400 mb-4" data-i18n="chk_downloads_title">📥 التحميلات</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Checklist Download -->
+            <div id="checklist-download-card" class="bg-dark-900/50 rounded-xl p-4 border border-gray-700 hover:border-brand-500/50 transition">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 rounded-lg bg-brand-600/20 flex items-center justify-center text-xl">📋</div>
+                <div>
+                  <div class="text-sm font-medium text-white" data-i18n="chk_dl_checklist">قائمة الفحص</div>
+                  <div class="text-xs text-gray-500" data-i18n="chk_dl_checklist_desc">تحميل القواعد كملف نصي</div>
+                </div>
+              </div>
+              <button id="btn-dl-checklist" onclick="downloadChecklist()" class="w-full py-2 bg-brand-600/10 hover:bg-brand-600/20 text-brand-400 rounded-lg text-sm font-medium transition">
+                <span data-i18n="chk_dl_btn">⬇️ تحميل</span>
+              </button>
+            </div>
+            <!-- Uploaded Files -->
+            <div id="files-download-card" class="hidden bg-dark-900/50 rounded-xl p-4 border border-gray-700">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 rounded-lg bg-purple-600/20 flex items-center justify-center text-xl">📁</div>
+                <div>
+                  <div class="text-sm font-medium text-white" data-i18n="chk_dl_files">ملفات الشركة</div>
+                  <div class="text-xs text-gray-500" data-i18n="chk_dl_files_desc">الملفات المرفوعة مع دليل الأسلوب</div>
+                </div>
+              </div>
+              <div id="files-list" class="space-y-2"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Guidelines Preview -->
+        <div id="guidelines-preview" class="hidden glass rounded-2xl p-6 mb-6 border border-brand-400/20 max-h-[400px] overflow-y-auto"></div>
+
+        <button onclick="checkContent()" id="btn-check"
+          class="w-full py-4 bg-gradient-to-l from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white rounded-xl font-bold text-lg transition transform hover:scale-[1.01]">
+          <span data-i18n="chk_btn">✅ افحص المحتوى</span>
+        </button>
+
+        <!-- Report Result -->
+        <div id="check-result" class="hidden mt-8 fade-in">
+          <!-- Brand Score Card -->
+          <div id="score-card" class="glass rounded-2xl p-6 mb-6">
+            <div class="flex items-center gap-6">
+              <div id="score-circle" class="relative w-28 h-28 flex-shrink-0">
+                <svg class="w-28 h-28 transform -rotate-90" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="42" fill="none" stroke="#1f2937" stroke-width="8"/>
+                  <circle id="score-arc" cx="50" cy="50" r="42" fill="none" stroke="#0c93e9" stroke-width="8"
+                    stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="264" style="transition: stroke-dashoffset 1s ease"/>
+                </svg>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                  <span id="score-text" class="text-2xl font-bold text-white">0%</span>
+                  <span class="text-[10px] text-gray-400 mt-0.5" data-i18n="chk_brand_score">Brand Score</span>
+                </div>
+              </div>
+              <div class="flex-1">
+                <h3 id="report-company" class="text-lg font-bold text-white mb-1"></h3>
+                <p id="report-summary" class="text-gray-400 text-sm mb-3"></p>
+                <div class="flex gap-4 text-sm">
+                  <div class="flex items-center gap-1.5 bg-green-500/10 px-3 py-1.5 rounded-lg border border-green-500/20">
+                    <span class="text-green-400">✅</span>
+                    <span id="passed-count" class="text-green-400 font-medium"></span>
+                  </div>
+                  <div class="flex items-center gap-1.5 bg-red-500/10 px-3 py-1.5 rounded-lg border border-red-500/20">
+                    <span class="text-red-400">❌</span>
+                    <span id="failed-count" class="text-red-400 font-medium"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="findings-list" class="space-y-3 mb-6"></div>
+
+          <!-- Before / After Section -->
+          <div id="corrected-section" class="glass rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-bold text-brand-400" data-i18n="chk_corrected_title">📝 النسخة المصححة</h3>
+              <div class="flex gap-2">
+                <button id="view-toggle-diff" onclick="toggleCorrectedView('diff')" class="px-3 py-1 bg-brand-600/20 text-brand-400 rounded-lg text-xs font-medium border border-brand-500/30">Before/After</button>
+                <button id="view-toggle-clean" onclick="toggleCorrectedView('clean')" class="px-3 py-1 bg-gray-700/50 text-gray-400 rounded-lg text-xs font-medium border border-gray-600/30">Clean</button>
+              </div>
+            </div>
+            <!-- Diff View (Before/After) -->
+            <div id="diff-view" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <div class="text-xs font-medium text-red-400 mb-2 flex items-center gap-1">
+                  <span>⬅️</span> <span data-i18n="chk_before">قبل</span>
+                </div>
+                <div id="before-text" class="bg-dark-900 rounded-xl p-4 text-gray-400 leading-relaxed whitespace-pre-wrap text-sm border border-red-500/10 min-h-[100px]"></div>
+              </div>
+              <div>
+                <div class="text-xs font-medium text-green-400 mb-2 flex items-center gap-1">
+                  <span>➡️</span> <span data-i18n="chk_after">بعد</span>
+                </div>
+                <div id="after-text" class="bg-dark-900 rounded-xl p-4 text-gray-200 leading-relaxed whitespace-pre-wrap text-sm border border-green-500/10 min-h-[100px]"></div>
+              </div>
+            </div>
+            <!-- Clean View -->
+            <div id="clean-view" class="hidden">
+              <div id="corrected-text" class="bg-dark-900 rounded-xl p-4 text-gray-200 leading-relaxed whitespace-pre-wrap"></div>
+            </div>
+            <button onclick="copyText('corrected-text')" class="mt-4 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm transition">
+              <span data-i18n="chk_copy_btn">📋 نسخ النص المصحح</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ HISTORY PAGE ============ -->
+    <div id="page-history" class="page fade-in">
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold mb-2" data-i18n="hist_title">سجل الفحوصات</h2>
+        <p class="text-gray-400" data-i18n="hist_desc">جميع الفحوصات السابقة ونتائجها</p>
+      </div>
+
+      <div id="history-empty" class="hidden text-center py-16">
+        <div class="text-6xl mb-4">📜</div>
+        <h3 class="text-xl font-semibold mb-2 text-gray-300" data-i18n="hist_empty">لا توجد فحوصات سابقة</h3>
+        <p class="text-gray-500 mb-6" data-i18n="hist_empty_desc">ابدأ بفحص محتوى وستظهر النتائج هنا</p>
+        <button onclick="showPage('check')" class="px-6 py-3 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-medium transition">
+          <span data-i18n="chk_btn">✅ افحص المحتوى</span>
+        </button>
+      </div>
+
+      <div id="history-list" class="space-y-4"></div>
+    </div>
+
+  </main>
+
+  <!-- ============ ABOUT SECTION ============ -->
+  <section class="max-w-4xl mx-auto px-6 mt-14 mb-4">
+
+    <!-- Divider -->
+    <div class="flex items-center gap-3 mb-6">
+      <div class="h-px flex-1 bg-gradient-to-l from-brand-500/30 to-transparent"></div>
+      <span class="text-brand-400 text-xs font-medium tracking-widest uppercase" data-i18n="about_title">ما هو ComplyKit؟</span>
+      <div class="h-px flex-1 bg-gradient-to-r from-brand-500/30 to-transparent"></div>
+    </div>
+
+    <p class="text-base leading-relaxed text-center mb-10 max-w-2xl mx-auto text-gray-400" data-i18n="about_desc">أول منصة سعودية تفحص المحتوى الرقمي فحص مزدوج — تناسق مع هوية البراند + توافق مع الأنظمة السعودية المحلية. ارفع دليل أسلوب شركتك، والذكاء الاصطناعي يستخرج القواعد تلقائياً ويفحص كل محتوى قبل النشر.</p>
+
+    <!-- 3 Features -->
+    <div class="grid grid-cols-3 gap-6 mb-12 text-center">
+      <div>
+        <div class="text-2xl mb-2">🔍</div>
+        <h3 class="font-bold text-sm mb-1" data-i18n="about_f1_title">فحص مزدوج بالـ AI</h3>
+        <p class="text-xs text-gray-400" data-i18n="about_f1_desc">يراجع تناسق البراند + توافق الأنظمة السعودية في نفس الوقت ويعطيك Brand Score + تقرير مفصّل.</p>
+      </div>
+      <div>
+        <div class="text-2xl mb-2">📝</div>
+        <h3 class="font-bold text-sm mb-1" data-i18n="about_f2_title">نسخة مصححة جاهزة</h3>
+        <p class="text-xs text-gray-400" data-i18n="about_f2_desc">مقارنة قبل/بعد توضح كل تغيير ولماذا — نسخة مصححة جاهزة للنشر بضغطة زر.</p>
+      </div>
+      <div>
+        <div class="text-2xl mb-2">📈</div>
+        <h3 class="font-bold text-sm mb-1" data-i18n="about_f3_title">يتحسّن مع الوقت</h3>
+        <p class="text-xs text-gray-400" data-i18n="about_f3_desc">كل فحص يبني قاعدة بيانات أقوى — التحليل يصير أدق وأذكى مع كل استخدام.</p>
+      </div>
+    </div>
+
+    <!-- Audience Divider -->
+    <div class="flex items-center gap-3 mb-6">
+      <div class="h-px flex-1 bg-gradient-to-l from-brand-500/30 to-transparent"></div>
+      <span class="text-brand-400 text-xs font-medium tracking-widest uppercase" data-i18n="audience_title">لمن هذا المنتج؟</span>
+      <div class="h-px flex-1 bg-gradient-to-r from-brand-500/30 to-transparent"></div>
+    </div>
+
+    <div class="space-y-3 mb-12 max-w-2xl mx-auto text-sm">
+      <div class="flex items-start gap-3">
+        <span class="text-lg">🏢</span>
+        <p><span class="font-bold" data-i18n="aud_1_title">فرق التسويق والمحتوى</span><span class="text-gray-400"> — </span><span class="text-gray-400" data-i18n="aud_1_desc">تضمن إن كل بوست وإعلان وإيميل يعكس هوية الشركة بشكل موحّد قبل ما ينزل.</span></p>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="text-lg">📢</span>
+        <p><span class="font-bold" data-i18n="aud_2_title">الوكالات الإعلانية</span><span class="text-gray-400"> — </span><span class="text-gray-400" data-i18n="aud_2_desc">تدير محتوى عدة شركات؟ كل شركة لها قواعدها — ComplyKit يضمن التناسق لكل عميل.</span></p>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="text-lg">🚀</span>
+        <p><span class="font-bold" data-i18n="aud_3_title">الشركات الناشئة</span><span class="text-gray-400"> — </span><span class="text-gray-400" data-i18n="aud_3_desc">تبني براندك من البداية؟ ComplyKit يساعدك تثبّت هويتك من أول محتوى تنشره.</span></p>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="text-lg">⚖️</span>
+        <p><span class="font-bold" data-i18n="aud_4_title">أي جهة سعودية</span><span class="text-gray-400"> — </span><span class="text-gray-400" data-i18n="aud_4_desc">تنشر محتوى رقمي وتحتاج تتوافق مع الأنظمة المحلية — PDPL، نظام التجارة الإلكترونية، وغيرها.</span></p>
+      </div>
+    </div>
+
+    <!-- Why Divider -->
+    <div class="flex items-center gap-3 mb-6">
+      <div class="h-px flex-1 bg-gradient-to-l from-brand-500/30 to-transparent"></div>
+      <span class="text-brand-400 text-xs font-medium tracking-widest uppercase" data-i18n="why_title">ليش ComplyKit؟</span>
+      <div class="h-px flex-1 bg-gradient-to-r from-brand-500/30 to-transparent"></div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-6 max-w-2xl mx-auto text-center text-sm">
+      <div>
+        <div class="text-2xl mb-2">❌</div>
+        <div class="text-xs font-bold text-red-400 mb-1" data-i18n="why_without">بدون ComplyKit</div>
+        <p class="text-xs text-gray-400" data-i18n="why_without_desc">مراجعة يدوية تاخذ ساعات، أخطاء تفوت، محتوى غير متناسق، ومخاطر مخالفات نظامية.</p>
+      </div>
+      <div>
+        <div class="text-2xl mb-2">✅</div>
+        <div class="text-xs font-bold text-green-400 mb-1" data-i18n="why_with">مع ComplyKit</div>
+        <p class="text-xs text-gray-400" data-i18n="why_with_desc">فحص تلقائي بثوانٍ، تناسق ١٠٠٪ مع البراند، توافق مع الأنظمة السعودية، ونسخة مصححة جاهزة.</p>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-gray-800 mt-16 py-8">
+    <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white font-bold text-sm">C</div>
+        <span class="text-gray-400 text-sm">ComplyKit &copy; 2026</span>
+      </div>
+      <div class="flex items-center gap-4 text-sm text-gray-500">
+        <span data-i18n="footer_powered">مدعوم بالذكاء الاصطناعي</span>
+        <span class="text-gray-700">|</span>
+        <span>مي معافا &amp; آلاء معافا</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Loading Overlay -->
+  <div id="loading-overlay" class="hidden fixed inset-0 bg-dark-950/80 backdrop-blur-sm z-50 flex items-center justify-center">
+    <div class="glass rounded-2xl p-8 text-center">
+      <div class="w-16 h-16 border-4 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+      <p id="loading-text" class="text-lg text-gray-300 loading-dots" data-i18n="loading">جاري التحليل</p>
+    </div>
+  </div>
+
+  <script src="/i18n.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

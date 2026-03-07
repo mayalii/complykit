@@ -1,0 +1,275 @@
+[
+  {
+    "id": "aramco001",
+    "companyName": "أرامكو السعودية",
+    "checklist": {
+      "companyName": "أرامكو السعودية",
+      "tone": {
+        "description": "رسمي، موثوق، مؤسسي",
+        "rules": [
+          "استخدام لغة رسمية واحترافية في جميع المحتويات",
+          "تجنب اللهجة العامية أو التعبيرات الدارجة",
+          "الحفاظ على نبرة ثقة وقيادية دون تكبّر",
+          "استخدام صيغة المتكلم الجماعي (نحن) بدلاً من المفرد",
+          "تجنب المبالغة والادعاءات غير المدعومة بأرقام"
+        ]
+      },
+      "vocabulary": {
+        "preferred": [
+          "الطاقة المستدامة",
+          "الابتكار",
+          "الريادة",
+          "التحول",
+          "الشراكة"
+        ],
+        "banned": [
+          "بترول خام",
+          "نفط",
+          "احتكار",
+          "أرخص"
+        ],
+        "rules": [
+          "استخدام 'أرامكو السعودية' كاملة في أول ذكر، ثم 'أرامكو' في باقي النص",
+          "كتابة 'Saudi Aramco' بالإنجليزية وليس 'Aramco Saudi' أو 'ARAMCO'",
+          "استخدام مصطلح 'الطاقة' بدلاً من 'النفط' أو 'البترول' قدر الإمكان",
+          "استخدام 'التحول الطاقوي' بدلاً من 'الانتقال من النفط'",
+          "تجنب المصطلحات التقنية دون شرحها للقارئ العام"
+        ]
+      },
+      "formatting": {
+        "rules": [
+          "عدم استخدام الإيموجي في المحتوى الرسمي",
+          "استخدام الإيموجي بحذر في محتوى السوشال ميديا (حد أقصى 2)",
+          "الأرقام تكتب بالأرقام العربية (1، 2، 3) وليس الهندية",
+          "التواريخ بصيغة: DD MMMM YYYY",
+          "استخدام الهاشتاقات بالإنجليزية والعربية معاً"
+        ]
+      },
+      "structure": {
+        "rules": [
+          "البدء بأهم معلومة في الفقرة الأولى (أسلوب الهرم المقلوب)",
+          "الفقرات لا تتجاوز 4 أسطر",
+          "وجود دعوة للتفاعل (CTA) في نهاية كل محتوى تسويقي",
+          "استخدام عناوين فرعية كل 200 كلمة في المقالات الطويلة"
+        ]
+      },
+      "brand_identity": {
+        "rules": [
+          "ربط المحتوى دائماً برؤية 2030 عند الحديث عن المستقبل",
+          "التأكيد على دور أرامكو في التنمية المستدامة",
+          "عدم مقارنة أرامكو بشركات منافسة بالاسم",
+          "استخدام ألوان العلامة التجارية (الأخضر والأزرق) في أي محتوى بصري"
+        ]
+      },
+      "compliance": {
+        "rules": [
+          "إضافة إخلاء مسؤولية في أي محتوى يحتوي أرقام مالية",
+          "عدم نشر معلومات مالية قبل الإفصاح الرسمي لتداول",
+          "التصريح بأن المحتوى إعلاني عند الترويج لمنتجات أو خدمات",
+          "الحصول على موافقة الأفراد قبل نشر صورهم أو اقتباساتهم"
+        ]
+      },
+      "content_rules": {
+        "rules": [
+          "عدم التطرق للمواضيع السياسية أو الطائفية",
+          "تجنب أي محتوى قد يُفسر على أنه إضرار بالبيئة",
+          "عدم الحديث عن الرواتب أو المزايا الداخلية",
+          "عدم مشاركة صور المنشآت الداخلية دون إذن"
+        ]
+      },
+      "summary": "أسلوب مؤسسي رسمي يعكس الريادة والاستدامة مع التزام برؤية 2030"
+    },
+    "createdAt": "2026-03-01T10:00:00.000Z",
+    "totalRules": 28,
+    "files": [
+      {
+        "index": 0,
+        "name": "brand-guidelines-aramco.txt",
+        "type": "text",
+        "isImage": false,
+        "size": 120,
+        "data": "data:text/plain;base64,2K/ZhNmK2YQg2KPYs9mE2YjYqCDYo9ix2KfZhdmD2Ygg2KfZhNiz2LnZiNiv2YrYqSAtINin2YTZhtiz2K7YqSDYp9mE2LHYs9mF2YrYqQ=="
+      },
+      {
+        "index": 1,
+        "name": "social-media-policy.txt",
+        "type": "text",
+        "isImage": false,
+        "size": 85,
+        "data": "data:text/plain;base64,2LPZitin2LPYqSDYp9mE2YXYrdiq2YjZiSDYudmE2Ykg2YXZiNin2YLYuSDYp9mE2KrZiNin2LXZhCDYp9mE2KfYrNiq2YXYp9i52Yo="
+      }
+    ]
+  },
+  {
+    "id": "stc002",
+    "companyName": "STC",
+    "checklist": {
+      "companyName": "STC",
+      "tone": {
+        "description": "شبابي، تقني، ودّي وعصري",
+        "rules": [
+          "استخدام لغة ودّية وقريبة من الجمهور",
+          "مزج العربية والإنجليزية بشكل طبيعي",
+          "استخدام أسلوب مباشر وبسيط دون تعقيد",
+          "إظهار الحماس والإيجابية في المحتوى",
+          "تجنب اللغة الرسمية الجافة"
+        ]
+      },
+      "vocabulary": {
+        "preferred": [
+          "فعّل",
+          "استمتع",
+          "أسرع",
+          "غير محدود",
+          "تجربة رقمية",
+          "اتصالك"
+        ],
+        "banned": [
+          "رخيص",
+          "مشكلة تقنية",
+          "عطل",
+          "انقطاع"
+        ],
+        "rules": [
+          "كتابة 'stc' بحروف صغيرة دائماً وليس 'STC' أو 'Stc'",
+          "استخدام 'stc' بالإنجليزية حتى في المحتوى العربي",
+          "استخدام 'باقة' بدلاً من 'اشتراك' أو 'خطة'",
+          "استخدام 'تغطية' بدلاً من 'شبكة' عند الحديث عن الخدمة",
+          "تجنب المصطلحات التقنية المعقدة"
+        ]
+      },
+      "formatting": {
+        "rules": [
+          "استخدام الإيموجي بكثرة في السوشال ميديا (3-5 لكل بوست)",
+          "الهاشتاقات بالإنجليزية والعربية: #stc #اكسبلور",
+          "استخدام الأرقام بدلاً من كتابتها: '5G' وليس 'الجيل الخامس'",
+          "الجمل قصيرة ومباشرة — لا تتجاوز 15 كلمة",
+          "استخدام السطر الجديد بين كل نقطة في بوستات السوشال"
+        ]
+      },
+      "structure": {
+        "rules": [
+          "البدء بعبارة جذابة (hook) في أول سطر",
+          "ذكر العرض أو الميزة في أول 3 أسطر",
+          "إنهاء كل بوست بـ CTA واضح",
+          "السوشال ميديا: 3-5 أسطر كحد أقصى"
+        ]
+      },
+      "brand_identity": {
+        "rules": [
+          "استخدام اللون البنفسجي كلون أساسي في المحتوى البصري",
+          "عدم استخدام الشعار القديم (الأخضر)",
+          "ربط المحتوى بأسلوب حياة رقمي عصري",
+          "التأكيد على أن stc ليست مجرد اتصالات بل ممكّن رقمي"
+        ]
+      },
+      "compliance": {
+        "rules": [
+          "ذكر 'تطبق الشروط والأحكام' في كل عرض ترويجي",
+          "توضيح مدة العرض وتاريخ انتهائه",
+          "عدم المقارنة بشركات منافسة بالاسم",
+          "التصريح بأن المحتوى إعلاني (#إعلان) في المحتوى المدفوع"
+        ]
+      },
+      "content_rules": {
+        "rules": [
+          "تجنب الحديث عن أعطال الشبكة أو مشاكل الخدمة",
+          "عدم الوعد بسرعات محددة دون إضافة 'تصل إلى'",
+          "تجنب المحتوى الذي قد يُفسر بأنه يستهزئ بالمنافسين",
+          "عدم استخدام صور أشخاص حقيقيين بدون إذن"
+        ]
+      },
+      "summary": "أسلوب شبابي عصري يمزج العربي بالإنجليزي مع طاقة إيجابية وبساطة"
+    },
+    "createdAt": "2026-03-02T14:30:00.000Z",
+    "totalRules": 27
+  },
+  {
+    "id": "neom003",
+    "companyName": "NEOM",
+    "checklist": {
+      "companyName": "NEOM",
+      "tone": {
+        "description": "Visionary, futuristic, bold, and inspiring",
+        "rules": [
+          "Use ambitious, future-forward language",
+          "Write primarily in English; Arabic as secondary",
+          "Project confidence and certainty about the vision",
+          "Avoid hedging words like maybe, possibly, might",
+          "Use active voice"
+        ]
+      },
+      "vocabulary": {
+        "preferred": [
+          "reimagine",
+          "revolutionary",
+          "livability",
+          "cognitive",
+          "hyper-connected",
+          "zero-carbon"
+        ],
+        "banned": [
+          "desert city",
+          "sand",
+          "mirage",
+          "utopia",
+          "pipe dream"
+        ],
+        "rules": [
+          "Always write NEOM in all caps",
+          "Use THE LINE in all caps when referring to the linear city",
+          "Use OXAGON for the industrial city",
+          "Use TROJENA for the mountain resort",
+          "Prefer cognitive city over smart city",
+          "Use residents or community members not inhabitants"
+        ]
+      },
+      "formatting": {
+        "rules": [
+          "Minimal emoji use — maximum 1 per post, preferably none",
+          "Hashtags: #NEOM #TheFutureIsNow #WhatIsNEOM",
+          "Numbers always in digits: 170km, 500m, 9M residents",
+          "Use metric system exclusively",
+          "Dates in international format: March 5, 2026"
+        ]
+      },
+      "structure": {
+        "rules": [
+          "Lead with the vision, follow with the facts",
+          "Every piece must answer: Why does this matter for the future?",
+          "Include a forward-looking statement in every post",
+          "Long-form content must include data points and statistics"
+        ]
+      },
+      "brand_identity": {
+        "rules": [
+          "Always connect to Saudi Vision 2030",
+          "Position NEOM as a global project, not just Saudi",
+          "Reference sustainability and zero-carbon commitment",
+          "Use NEOM brand colors: black, white, and electric blue",
+          "Never use megaproject — use accelerator of human progress"
+        ]
+      },
+      "compliance": {
+        "rules": [
+          "Do not share construction timelines without official approval",
+          "Financial figures require PR team approval before publishing",
+          "All renders and visualizations must use approved NEOM imagery only",
+          "Add disclaimer for any forward-looking statements"
+        ]
+      },
+      "content_rules": {
+        "rules": [
+          "Never address criticism or negative press directly in content",
+          "Avoid political context — focus on innovation and livability",
+          "Do not compare NEOM to other cities or projects by name",
+          "Worker welfare topics require PR team guidance before publishing",
+          "Environmental claims must be backed by specific data"
+        ]
+      },
+      "summary": "Bold, visionary English-first content that positions NEOM as humanity's next chapter"
+    },
+    "createdAt": "2026-03-03T09:15:00.000Z",
+    "totalRules": 30
+  }
+]
