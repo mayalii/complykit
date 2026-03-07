@@ -53,7 +53,7 @@ async function loadDashboard() {
       statsRow.classList.add("grid");
       document.getElementById("stat-checklists").textContent = checklists.length;
       document.getElementById("stat-rules").textContent = checklists.reduce((s, c) => s + (c.totalRules || 0), 0);
-      document.getElementById("stat-companies").textContent = checklists.length;
+      document.getElementById("stat-companies").textContent = allChecklists.length;
     } else {
       statsRow.classList.add("hidden");
     }
