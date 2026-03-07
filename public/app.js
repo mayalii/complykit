@@ -465,15 +465,18 @@ async function checkContent() {
   const content = document.getElementById("content-to-check").value.trim();
 
   if (!checklistId) return alert(t("chk_alert_select"));
-  if (!content) return alert(t("chk_alert_content"));
+  if (!content && !checkFiles.length) return alert(t("chk_alert_content"));
 
   showLoading(t("chk_loading"));
+
+  // Prepare files data
+  const files = checkFiles.map(f => ({ name: f.name, type: f.type, isImage: f.isImage, data: f.dataUrl }));
 
   try {
     const res = await fetch("/api/check", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ checklistId, content }),
+      body: JSON.stringify({ checklistId, content, files }),
     });
     const data = await res.json();
 
@@ -724,6 +727,81 @@ function filterMyChecklists(checklists) {
   return checklists.filter(c => c.id === myId);
 }
 
+// ============ DRAG & DROP FILES ============
+let checkFiles = []; // {name, type, dataUrl}
+
+function initDropzone() {
+  const dz = document.getElementById("dropzone");
+  if (!dz) return;
+
+  ["dragenter", "dragover"].forEach(evt => {
+    dz.addEventListener(evt, e => {
+      e.preventDefault(); e.stopPropagation();
+      dz.classList.add("border-brand-500", "bg-brand-600/10");
+      document.getElementById("dropzone-default").classList.add("hidden");
+      document.getElementById("dropzone-hover").classList.remove("hidden");
+    });
+  });
+
+  ["dragleave", "drop"].forEach(evt => {
+    dz.addEventListener(evt, e => {
+      e.preventDefault(); e.stopPropagation();
+      dz.classList.remove("border-brand-500", "bg-brand-600/10");
+      document.getElementById("dropzone-default").classList.remove("hidden");
+      document.getElementById("dropzone-hover").classList.add("hidden");
+    });
+  });
+
+  dz.addEventListener("drop", e => {
+    const files = e.dataTransfer.files;
+    if (files.length) handleDropFiles(files);
+  });
+}
+
+function handleDropFiles(fileList) {
+  Array.from(fileList).forEach(file => {
+    if (checkFiles.some(f => f.name === file.name)) return; // skip duplicates
+    const reader = new FileReader();
+    reader.onload = () => {
+      const isImage = file.type.startsWith("image/");
+      checkFiles.push({
+        name: file.name,
+        type: file.type,
+        size: (file.size / 1024).toFixed(1),
+        dataUrl: reader.result,
+        isImage
+      });
+      renderCheckFilesPreview();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function removeCheckFile(idx) {
+  checkFiles.splice(idx, 1);
+  renderCheckFilesPreview();
+}
+
+function renderCheckFilesPreview() {
+  const container = document.getElementById("check-files-preview");
+  if (!checkFiles.length) { container.classList.add("hidden"); container.innerHTML = ""; return; }
+  container.classList.remove("hidden");
+  container.innerHTML = checkFiles.map((f, i) => `
+    <div class="flex items-center gap-3 bg-dark-900/50 rounded-xl px-4 py-3 border border-gray-700">
+      ${f.isImage
+        ? `<img src="${f.dataUrl}" class="w-10 h-10 rounded-lg object-cover border border-gray-600" />`
+        : `<div class="w-10 h-10 rounded-lg bg-brand-600/20 flex items-center justify-center text-lg">📄</div>`
+      }
+      <div class="flex-1 min-w-0">
+        <p class="text-sm text-white truncate">${f.name}</p>
+        <p class="text-xs text-gray-500">${f.size} KB</p>
+      </div>
+      <button onclick="removeCheckFile(${i})" class="text-gray-500 hover:text-red-400 transition text-lg">✕</button>
+    </div>
+  `).join("");
+}
+
 // ============ INIT ============
 initTheme();
 showPage("dashboard");
+setTimeout(initDropzone, 100);
