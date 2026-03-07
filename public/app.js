@@ -876,18 +876,41 @@ function initDropzone() {
   });
 }
 
+// File size limits (bytes)
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10 MB
+const MAX_VIDEO_SIZE = 20 * 1024 * 1024; // 20 MB
+const MAX_DOC_SIZE = 5 * 1024 * 1024;    // 5 MB
+
 function handleDropFiles(fileList) {
   Array.from(fileList).forEach(file => {
     if (checkFiles.some(f => f.name === file.name)) return; // skip duplicates
+
+    const isImage = file.type.startsWith("image/");
+    const isVideo = file.type.startsWith("video/");
+
+    // File size validation
+    if (isImage && file.size > MAX_IMAGE_SIZE) {
+      alert(t("chk_file_too_large") || `${file.name}: الملف كبير جداً (الحد الأقصى 10 MB)`);
+      return;
+    }
+    if (isVideo && file.size > MAX_VIDEO_SIZE) {
+      alert(t("chk_file_too_large_video") || `${file.name}: الفيديو كبير جداً (الحد الأقصى 20 MB)`);
+      return;
+    }
+    if (!isImage && !isVideo && file.size > MAX_DOC_SIZE) {
+      alert(t("chk_file_too_large") || `${file.name}: الملف كبير جداً (الحد الأقصى 5 MB)`);
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = () => {
-      const isImage = file.type.startsWith("image/");
       checkFiles.push({
         name: file.name,
         type: file.type,
         size: (file.size / 1024).toFixed(1),
         dataUrl: reader.result,
-        isImage
+        isImage,
+        isVideo
       });
       renderCheckFilesPreview();
     };
@@ -908,11 +931,13 @@ function renderCheckFilesPreview() {
     <div class="flex items-center gap-3 bg-dark-900/50 rounded-xl px-4 py-3 border border-gray-700">
       ${f.isImage
         ? `<img src="${f.dataUrl}" class="w-10 h-10 rounded-lg object-cover border border-gray-600" />`
-        : `<div class="w-10 h-10 rounded-lg bg-brand-600/20 flex items-center justify-center text-lg">📄</div>`
+        : f.isVideo
+          ? `<div class="w-10 h-10 rounded-lg bg-purple-600/20 flex items-center justify-center text-lg">🎬</div>`
+          : `<div class="w-10 h-10 rounded-lg bg-brand-600/20 flex items-center justify-center text-lg">📄</div>`
       }
       <div class="flex-1 min-w-0">
         <p class="text-sm text-white truncate">${f.name}</p>
-        <p class="text-xs text-gray-500">${f.size} KB</p>
+        <p class="text-xs text-gray-500">${f.size} KB ${f.isVideo ? '🎥' : f.isImage ? '🖼️' : ''}</p>
       </div>
       <button onclick="removeCheckFile(${i})" class="text-gray-500 hover:text-red-400 transition text-lg">✕</button>
     </div>

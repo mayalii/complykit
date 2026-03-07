@@ -377,11 +377,11 @@
           <div id="dropzone"
             class="relative border-2 border-dashed border-gray-600 rounded-xl p-6 text-center cursor-pointer transition hover:border-brand-500/50 hover:bg-brand-600/5"
             onclick="document.getElementById('file-input-check').click()">
-            <input type="file" id="file-input-check" multiple accept="image/*,.txt,.pdf,.doc,.docx" class="hidden" onchange="handleDropFiles(this.files)">
+            <input type="file" id="file-input-check" multiple accept="image/*,video/*,.txt,.pdf,.doc,.docx" class="hidden" onchange="handleDropFiles(this.files)">
             <div id="dropzone-default" class="pointer-events-none">
               <div class="text-3xl mb-2">📎</div>
               <p class="text-sm text-gray-400" data-i18n="chk_drop_text">اسحب الملفات هنا أو اضغط للرفع</p>
-              <p class="text-xs text-gray-600 mt-1" data-i18n="chk_drop_hint">صور، نصوص، PDF — يتم تحليلها مع المحتوى</p>
+              <p class="text-xs text-gray-600 mt-1" data-i18n="chk_drop_hint">صور، فيديوهات، PDF، TXT، Word — يتم تحليلها بالذكاء الاصطناعي</p>
             </div>
             <div id="dropzone-hover" class="hidden pointer-events-none">
               <div class="text-4xl mb-2 animate-bounce">⬇️</div>

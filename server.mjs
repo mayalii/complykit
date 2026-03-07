@@ -260,6 +260,70 @@ async function callGemini(prompt) {
   throw new Error("Gemini quota exceeded");
 }
 
+// Gemini Vision API — for images & video
+async function callGeminiWithVision(prompt, mediaFiles) {
+  const models = ["gemini-2.0-flash", "gemini-2.0-flash-lite"];
+  console.log(`🖼️ Calling Gemini Vision with ${mediaFiles.length} media file(s)...`);
+
+  // Build parts: text prompt + all media files
+  const parts = [{ text: prompt + "\n\nReturn ONLY valid JSON." }];
+  for (const mf of mediaFiles) {
+    parts.push({
+      inlineData: {
+        mimeType: mf.mimeType,
+        data: mf.base64
+      }
+    });
+  }
+
+  for (const model of models) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      console.log(`📡 Vision: Trying ${model} (attempt ${attempt})...`);
+
+      let res;
+      try {
+        res = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts }],
+            generationConfig: { temperature: 0.2, maxOutputTokens: 4096 },
+          }),
+        });
+      } catch (fetchErr) {
+        console.error(`❌ Vision fetch error: ${fetchErr.message}`);
+        break;
+      }
+
+      const raw = await res.text();
+
+      if (res.status === 429) {
+        console.log(`⏳ ${model} rate limited, waiting 5s...`);
+        await new Promise(r => setTimeout(r, 5000));
+        continue;
+      }
+
+      if (!res.ok) {
+        console.error(`❌ ${model} vision error ${res.status}:`, raw.slice(0, 300));
+        break;
+      }
+
+      const data = JSON.parse(raw);
+      if (data.error) { console.error(`❌ ${model}:`, data.error.message); break; }
+
+      const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!text) throw new Error("Empty vision response");
+
+      console.log(`✅ ${model} vision responded, length: ${text.length}`);
+      return text;
+    }
+  }
+
+  throw new Error("Gemini vision quota exceeded");
+}
+
 // Test endpoint
 app.get("/api/test", async (req, res) => {
   const results = [];
@@ -449,7 +513,7 @@ Return ONLY valid JSON in this exact format:
 // POST check content against a checklist
 app.post("/api/check", async (req, res) => {
   try {
-    const { checklistId, content } = req.body;
+    const { checklistId, content, files } = req.body;
 
     const checklists = loadChecklists();
     const checklist = checklists.find((c) => c.id === checklistId);
@@ -469,24 +533,76 @@ app.post("/api/check", async (req, res) => {
     }
     const rulesText = allRules.join("\n");
 
+    // ============ PROCESS FILES (images, videos, docs) ============
+    const mediaFiles = []; // for vision API
+    let filesContext = "";
+    let hasMedia = false;
+
+    if (files && files.length > 0) {
+      for (const file of files) {
+        const isImage = file.isImage || (file.type && file.type.startsWith("image/"));
+        const isVideo = file.type && file.type.startsWith("video/");
+
+        if (isImage && file.data) {
+          hasMedia = true;
+          // Extract base64 from data URL (remove "data:image/png;base64," prefix)
+          const base64 = file.data.includes(",") ? file.data.split(",")[1] : file.data;
+          mediaFiles.push({
+            mimeType: file.type || "image/jpeg",
+            base64
+          });
+          filesContext += `\n[Image: ${file.name}] — analyze visually for brand compliance\n`;
+          console.log(`📎 Image attached: ${file.name} (${file.type})`);
+        } else if (isVideo && file.data) {
+          hasMedia = true;
+          const base64 = file.data.includes(",") ? file.data.split(",")[1] : file.data;
+          mediaFiles.push({
+            mimeType: file.type || "video/mp4",
+            base64
+          });
+          filesContext += `\n[Video: ${file.name}] — analyze visually for brand compliance\n`;
+          console.log(`📎 Video attached: ${file.name} (${file.type})`);
+        } else if (file.data && !file.data.startsWith("data:")) {
+          // Plain text file
+          filesContext += `\n--- File: ${file.name} ---\n${file.data}\n`;
+        } else {
+          filesContext += `\n[Document: ${file.name}]\n`;
+        }
+      }
+    }
+
+    const contentBlock = content ? `CONTENT:\n${content}` : "No text content provided — analyze the attached media files only.";
+    const mediaNote = hasMedia
+      ? `\nIMPORTANT: Analyze ALL attached images/videos visually. Check text in images, colors, logos, layout, messaging, and visual brand consistency. Describe what you see and flag any violations.`
+      : "";
+
     const prompt = `Brand consistency check for "${checklist.companyName}". Review content against rules, find violations, return JSON.
 
 RULES:
 ${rulesText}
+${mediaNote}
+${filesContext ? `\nATTACHED FILES:\n${filesContext}` : ""}
 
-CONTENT:
-${content}
+${contentBlock}
 
-Return JSON: {"overallScore":0-100,"totalRules":${allRules.length},"passedRules":N,"failedRules":N,"findings":[{"severity":"high/medium/low","category":"tone/vocabulary/formatting/structure/brand_identity/compliance/content_rules","rule":"violated rule","issue":"problem","suggestion":"fix","excerpt":"text"}],"correctedVersion":"fixed content with [changes]","summary":"1 sentence"}`;
+Return JSON: {"overallScore":0-100,"totalRules":${allRules.length},"passedRules":N,"failedRules":N,"findings":[{"severity":"high/medium/low","category":"tone/vocabulary/formatting/structure/brand_identity/compliance/content_rules/visual","rule":"violated rule","issue":"problem","suggestion":"fix","excerpt":"text or visual description"}],"correctedVersion":"fixed content with [changes] or description of visual fixes needed","summary":"1 sentence"}`;
 
-    const response = await callAI(prompt);
+    // Use vision API if media files present, otherwise normal text AI
+    let response;
+    if (hasMedia && mediaFiles.length > 0 && GEMINI_API_KEY) {
+      console.log(`🖼️ Using Gemini Vision for ${mediaFiles.length} media file(s)`);
+      response = await callGeminiWithVision(prompt, mediaFiles);
+    } else {
+      response = await callAI(prompt);
+    }
+
     let report = parseJSON(response);
 
     const result = {
       checklistId,
       companyName: checklist.companyName,
       report,
-      contentPreview: content.slice(0, 150),
+      contentPreview: content ? content.slice(0, 150) : (files && files.length > 0 ? `📎 ${files.length} file(s) analyzed` : ""),
       checkedAt: new Date().toISOString(),
     };
 
@@ -502,13 +618,14 @@ Return JSON: {"overallScore":0-100,"totalRules":${allRules.length},"passedRules"
       checklistId,
       score: report.overallScore || 0,
       violations: report.failedRules || 0,
+      mediaFiles: mediaFiles.length,
       ip: req.ip,
     });
 
     res.json(result);
   } catch (err) {
     console.error("Check error:", err);
-    if (err.message === "ALL_MODELS_BUSY") {
+    if (err.message === "ALL_MODELS_BUSY" || err.message.includes("quota")) {
       res.status(429).json({ error: "API_RATE_LIMIT", message: "All AI models are busy. Please wait 1-2 minutes and try again." });
     } else {
       res.status(500).json({ error: err.message });
