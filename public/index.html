@@ -371,25 +371,76 @@
           <label class="block text-sm font-medium text-gray-300 mb-3" data-i18n="chk_content_label">المحتوى المراد فحصه</label>
           <textarea id="content-to-check" rows="6" data-i18n-placeholder="chk_content_ph"
             placeholder="الصق المحتوى هنا... (بوست سوشال ميديا، إعلان، إيميل، مقال)"
-            class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 transition resize-y mb-4"></textarea>
+            class="w-full bg-dark-900 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 transition resize-y"></textarea>
+        </div>
 
-          <!-- Drag & Drop Zone -->
-          <div id="dropzone"
-            class="relative border-2 border-dashed border-gray-600 rounded-xl p-6 text-center cursor-pointer transition hover:border-brand-500/50 hover:bg-brand-600/5"
-            onclick="document.getElementById('file-input-check').click()">
-            <input type="file" id="file-input-check" multiple accept="image/*,video/*,.txt,.pdf,.doc,.docx" class="hidden" onchange="handleDropFiles(this.files)">
-            <div id="dropzone-default" class="pointer-events-none">
-              <div class="text-3xl mb-2">📎</div>
-              <p class="text-sm text-gray-400" data-i18n="chk_drop_text">اسحب الملفات هنا أو اضغط للرفع</p>
-              <p class="text-xs text-gray-600 mt-1" data-i18n="chk_drop_hint">صور، فيديوهات، PDF، TXT، Word — يتم تحليلها بالذكاء الاصطناعي</p>
+        <!-- ===== TWO UPLOAD ZONES ===== -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+
+          <!-- 1) Content Media Zone (images, videos, ads) -->
+          <div class="glass rounded-2xl p-5">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-xl bg-purple-600/20 flex items-center justify-center text-xl">🎬</div>
+              <div>
+                <h4 class="text-sm font-bold text-white" data-i18n="chk_media_title">المحتوى الإعلاني</h4>
+                <p class="text-xs text-gray-500" data-i18n="chk_media_desc">صور، فيديوهات، محتوى مراد فحصه</p>
+              </div>
             </div>
-            <div id="dropzone-hover" class="hidden pointer-events-none">
-              <div class="text-4xl mb-2 animate-bounce">⬇️</div>
-              <p class="text-sm text-brand-400 font-medium" data-i18n="chk_drop_release">أفلت الملفات هنا</p>
+            <div class="flex gap-2 mb-3">
+              <button type="button" onclick="document.getElementById('file-input-check').click()"
+                class="flex-1 flex items-center justify-center gap-2 bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 px-4 py-2 rounded-xl font-medium transition text-sm border border-purple-500/20">
+                <span>📎</span> <span data-i18n="chk_media_btn">ارفع صورة / فيديو</span>
+              </button>
+              <input type="file" id="file-input-check" multiple accept="image/*,video/*" class="hidden" onchange="handleDropFiles(this.files)">
             </div>
+            <div id="dropzone"
+              class="relative border-2 border-dashed border-gray-600 rounded-xl p-4 text-center cursor-pointer transition hover:border-purple-500/50 hover:bg-purple-600/5"
+              onclick="document.getElementById('file-input-check').click()">
+              <div id="dropzone-default" class="pointer-events-none">
+                <div class="text-3xl mb-1">🖼️</div>
+                <p class="text-sm text-gray-400" data-i18n="chk_media_drop">اسحب الصور أو الفيديوهات هنا</p>
+                <p class="text-xs text-gray-600 mt-1" data-i18n="chk_media_hint">PNG, JPG, MP4, MOV — يتم تحليلها بالذكاء الاصطناعي</p>
+              </div>
+              <div id="dropzone-hover" class="hidden pointer-events-none">
+                <div class="text-3xl mb-1 animate-bounce">⬇️</div>
+                <p class="text-sm text-purple-400 font-medium" data-i18n="chk_drop_release">أفلت الملفات هنا</p>
+              </div>
+            </div>
+            <div id="check-files-preview" class="hidden mt-3 space-y-2"></div>
           </div>
-          <!-- Uploaded Files Preview -->
-          <div id="check-files-preview" class="hidden mt-4 space-y-2"></div>
+
+          <!-- 2) Guidelines / Policy Zone -->
+          <div class="glass rounded-2xl p-5">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-xl bg-brand-600/20 flex items-center justify-center text-xl">📋</div>
+              <div>
+                <h4 class="text-sm font-bold text-white" data-i18n="chk_policy_title">شروط وسياسات الشركة</h4>
+                <p class="text-xs text-gray-500" data-i18n="chk_policy_desc">ارفع قايدلاينز أو شروط إضافية للفحص</p>
+              </div>
+            </div>
+            <div class="flex gap-2 mb-3">
+              <button type="button" onclick="document.getElementById('file-input-guidelines').click()"
+                class="flex-1 flex items-center justify-center gap-2 bg-brand-600/20 hover:bg-brand-600/30 text-brand-300 px-4 py-2 rounded-xl font-medium transition text-sm border border-brand-500/20">
+                <span>📄</span> <span data-i18n="chk_policy_btn">ارفع ملف الشروط</span>
+              </button>
+              <input type="file" id="file-input-guidelines" multiple accept=".txt,.pdf,.doc,.docx,.json,.csv" class="hidden" onchange="handleGuidelineFiles(this.files)">
+            </div>
+            <div id="dropzone-guidelines"
+              class="relative border-2 border-dashed border-gray-600 rounded-xl p-4 text-center cursor-pointer transition hover:border-brand-500/50 hover:bg-brand-600/5"
+              onclick="document.getElementById('file-input-guidelines').click()">
+              <div id="dropzone-guidelines-default" class="pointer-events-none">
+                <div class="text-3xl mb-1">📁</div>
+                <p class="text-sm text-gray-400" data-i18n="chk_policy_drop">اسحب ملفات السياسات والشروط هنا</p>
+                <p class="text-xs text-gray-600 mt-1" data-i18n="chk_policy_hint">PDF, TXT, Word, JSON — شروط إضافية للفحص</p>
+              </div>
+              <div id="dropzone-guidelines-hover" class="hidden pointer-events-none">
+                <div class="text-3xl mb-1 animate-bounce">⬇️</div>
+                <p class="text-sm text-brand-400 font-medium" data-i18n="chk_drop_release">أفلت الملفات هنا</p>
+              </div>
+            </div>
+            <div id="guideline-files-preview" class="hidden mt-3 space-y-2"></div>
+          </div>
+
         </div>
 
         <!-- Downloads Section -->

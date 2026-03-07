@@ -513,7 +513,7 @@ Return ONLY valid JSON in this exact format:
 // POST check content against a checklist
 app.post("/api/check", async (req, res) => {
   try {
-    const { checklistId, content, files } = req.body;
+    const { checklistId, content, files, policyFiles } = req.body;
 
     const checklists = loadChecklists();
     const checklist = checklists.find((c) => c.id === checklistId);
@@ -571,9 +571,39 @@ app.post("/api/check", async (req, res) => {
       }
     }
 
+    // ============ PROCESS POLICY/GUIDELINE FILES ============
+    let policyContext = "";
+    if (policyFiles && policyFiles.length > 0) {
+      for (const pf of policyFiles) {
+        if (pf.data && !pf.data.startsWith("data:")) {
+          // Plain text
+          policyContext += `\n--- Policy File: ${pf.name} ---\n${pf.data}\n`;
+        } else if (pf.data && pf.data.includes(",")) {
+          // base64 document — try to decode if text-based
+          try {
+            const base64 = pf.data.split(",")[1];
+            const decoded = Buffer.from(base64, "base64").toString("utf-8");
+            // Check if decoded content is readable text (not binary)
+            const isBinary = decoded.includes("\x00") || decoded.includes("\ufffd");
+            if (!isBinary && decoded.length > 10) {
+              policyContext += `\n--- Policy File: ${pf.name} ---\n${decoded.slice(0, 5000)}\n`;
+            } else {
+              policyContext += `\n[Policy Document: ${pf.name} — binary file, could not extract text]\n`;
+            }
+          } catch (e) {
+            policyContext += `\n[Policy Document: ${pf.name}]\n`;
+          }
+        }
+        console.log(`📋 Policy file attached: ${pf.name}`);
+      }
+    }
+
     const contentBlock = content ? `CONTENT:\n${content}` : "No text content provided — analyze the attached media files only.";
     const mediaNote = hasMedia
       ? `\nIMPORTANT: Analyze ALL attached images/videos visually. Check text in images, colors, logos, layout, messaging, and visual brand consistency. Describe what you see and flag any violations.`
+      : "";
+    const policyNote = policyContext
+      ? `\nADDITIONAL COMPANY POLICIES (uploaded by user — check content against these rules too):\n${policyContext}\nIMPORTANT: Also check the content against ALL rules found in the above policy documents. Report violations of these custom policies in addition to the brand rules.`
       : "";
 
     const prompt = `Brand consistency check for "${checklist.companyName}". Review content against rules, find violations, return JSON.
@@ -581,6 +611,7 @@ app.post("/api/check", async (req, res) => {
 RULES:
 ${rulesText}
 ${mediaNote}
+${policyNote}
 ${filesContext ? `\nATTACHED FILES:\n${filesContext}` : ""}
 
 ${contentBlock}

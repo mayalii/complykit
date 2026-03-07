@@ -587,14 +587,16 @@ async function checkContent() {
 
   showLoading(t("chk_loading"));
 
-  // Prepare files data
-  const files = checkFiles.map(f => ({ name: f.name, type: f.type, isImage: f.isImage, data: f.dataUrl }));
+  // Prepare content media files (images/videos to analyze)
+  const files = checkFiles.map(f => ({ name: f.name, type: f.type, isImage: f.isImage, isVideo: f.isVideo, data: f.dataUrl }));
+  // Prepare guideline/policy files (company rules to check against)
+  const policyFiles = guidelineFiles.map(f => ({ name: f.name, type: f.type, isImage: false, data: f.dataUrl, isGuideline: true }));
 
   try {
     const res = await fetch("/api/check", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ checklistId, content, files }),
+      body: JSON.stringify({ checklistId, content, files, policyFiles }),
     });
     const data = await res.json();
 
@@ -846,34 +848,63 @@ function filterMyChecklists(checklists) {
 }
 
 // ============ DRAG & DROP FILES ============
-let checkFiles = []; // {name, type, dataUrl}
+let checkFiles = []; // {name, type, dataUrl} — content media (images, videos)
+let guidelineFiles = []; // {name, type, dataUrl} — company guidelines/policies
 
 function initDropzone() {
+  // === Content Media Dropzone ===
   const dz = document.getElementById("dropzone");
-  if (!dz) return;
-
-  ["dragenter", "dragover"].forEach(evt => {
-    dz.addEventListener(evt, e => {
-      e.preventDefault(); e.stopPropagation();
-      dz.classList.add("border-brand-500", "bg-brand-600/10");
-      document.getElementById("dropzone-default").classList.add("hidden");
-      document.getElementById("dropzone-hover").classList.remove("hidden");
+  if (dz) {
+    ["dragenter", "dragover"].forEach(evt => {
+      dz.addEventListener(evt, e => {
+        e.preventDefault(); e.stopPropagation();
+        dz.classList.add("border-purple-500", "bg-purple-600/10");
+        document.getElementById("dropzone-default").classList.add("hidden");
+        document.getElementById("dropzone-hover").classList.remove("hidden");
+      });
     });
-  });
 
-  ["dragleave", "drop"].forEach(evt => {
-    dz.addEventListener(evt, e => {
-      e.preventDefault(); e.stopPropagation();
-      dz.classList.remove("border-brand-500", "bg-brand-600/10");
-      document.getElementById("dropzone-default").classList.remove("hidden");
-      document.getElementById("dropzone-hover").classList.add("hidden");
+    ["dragleave", "drop"].forEach(evt => {
+      dz.addEventListener(evt, e => {
+        e.preventDefault(); e.stopPropagation();
+        dz.classList.remove("border-purple-500", "bg-purple-600/10");
+        document.getElementById("dropzone-default").classList.remove("hidden");
+        document.getElementById("dropzone-hover").classList.add("hidden");
+      });
     });
-  });
 
-  dz.addEventListener("drop", e => {
-    const files = e.dataTransfer.files;
-    if (files.length) handleDropFiles(files);
-  });
+    dz.addEventListener("drop", e => {
+      const files = e.dataTransfer.files;
+      if (files.length) handleDropFiles(files);
+    });
+  }
+
+  // === Guidelines / Policy Dropzone ===
+  const dzg = document.getElementById("dropzone-guidelines");
+  if (dzg) {
+    ["dragenter", "dragover"].forEach(evt => {
+      dzg.addEventListener(evt, e => {
+        e.preventDefault(); e.stopPropagation();
+        dzg.classList.add("border-brand-500", "bg-brand-600/10");
+        document.getElementById("dropzone-guidelines-default").classList.add("hidden");
+        document.getElementById("dropzone-guidelines-hover").classList.remove("hidden");
+      });
+    });
+
+    ["dragleave", "drop"].forEach(evt => {
+      dzg.addEventListener(evt, e => {
+        e.preventDefault(); e.stopPropagation();
+        dzg.classList.remove("border-brand-500", "bg-brand-600/10");
+        document.getElementById("dropzone-guidelines-default").classList.remove("hidden");
+        document.getElementById("dropzone-guidelines-hover").classList.add("hidden");
+      });
+    });
+
+    dzg.addEventListener("drop", e => {
+      const files = e.dataTransfer.files;
+      if (files.length) handleGuidelineFiles(files);
+    });
+  }
 }
 
 // File size limits (bytes)
@@ -942,6 +973,58 @@ function renderCheckFilesPreview() {
       <button onclick="removeCheckFile(${i})" class="text-gray-500 hover:text-red-400 transition text-lg">✕</button>
     </div>
   `).join("");
+}
+
+// ============ GUIDELINE FILES (company policies/conditions) ============
+function handleGuidelineFiles(fileList) {
+  Array.from(fileList).forEach(file => {
+    if (guidelineFiles.some(f => f.name === file.name)) return; // skip duplicates
+
+    if (file.size > MAX_DOC_SIZE) {
+      alert(t("chk_file_too_large") || `${file.name}: الملف كبير جداً (الحد الأقصى 5 MB)`);
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      guidelineFiles.push({
+        name: file.name,
+        type: file.type,
+        size: (file.size / 1024).toFixed(1),
+        dataUrl: reader.result,
+        isImage: false,
+        isVideo: false,
+        isGuideline: true
+      });
+      renderGuidelineFilesPreview();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function removeGuidelineFile(idx) {
+  guidelineFiles.splice(idx, 1);
+  renderGuidelineFilesPreview();
+}
+
+function renderGuidelineFilesPreview() {
+  const container = document.getElementById("guideline-files-preview");
+  if (!guidelineFiles.length) { container.classList.add("hidden"); container.innerHTML = ""; return; }
+  container.classList.remove("hidden");
+  container.innerHTML = guidelineFiles.map((f, i) => {
+    const ext = f.name.split(".").pop().toLowerCase();
+    const icon = ext === "pdf" ? "📄" : ext === "json" ? "📋" : ext === "doc" || ext === "docx" ? "📝" : "📄";
+    return `
+      <div class="flex items-center gap-3 bg-dark-900/50 rounded-xl px-4 py-3 border border-gray-700">
+        <div class="w-10 h-10 rounded-lg bg-brand-600/20 flex items-center justify-center text-lg">${icon}</div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm text-white truncate">${f.name}</p>
+          <p class="text-xs text-gray-500">${f.size} KB</p>
+        </div>
+        <button onclick="removeGuidelineFile(${i})" class="text-gray-500 hover:text-red-400 transition text-lg">✕</button>
+      </div>
+    `;
+  }).join("");
 }
 
 // ============ INIT ============
