@@ -1,3 +1,121 @@
+// ============ AUTH ============
+function getLoggedUser() {
+  const u = localStorage.getItem("complykit-user");
+  return u ? JSON.parse(u) : null;
+}
+
+function checkAuth() {
+  const user = getLoggedUser();
+  if (user) {
+    document.getElementById("auth-page").style.display = "none";
+    document.getElementById("app-container").style.display = "";
+  } else {
+    document.getElementById("auth-page").style.display = "";
+    document.getElementById("app-container").style.display = "none";
+  }
+}
+
+function showAuthTab(tab) {
+  const loginBtn = document.getElementById("tab-login");
+  const signupBtn = document.getElementById("tab-signup");
+  const loginForm = document.getElementById("form-login");
+  const signupForm = document.getElementById("form-signup");
+
+  if (tab === "login") {
+    loginBtn.classList.add("bg-brand-600", "text-white");
+    loginBtn.classList.remove("t-text-secondary");
+    signupBtn.classList.remove("bg-brand-600", "text-white");
+    signupBtn.classList.add("t-text-secondary");
+    loginForm.style.display = "";
+    signupForm.style.display = "none";
+  } else {
+    signupBtn.classList.add("bg-brand-600", "text-white");
+    signupBtn.classList.remove("t-text-secondary");
+    loginBtn.classList.remove("bg-brand-600", "text-white");
+    loginBtn.classList.add("t-text-secondary");
+    signupForm.style.display = "";
+    loginForm.style.display = "none";
+  }
+  // Clear errors
+  document.getElementById("login-error").classList.add("hidden");
+  document.getElementById("signup-error").classList.add("hidden");
+  document.getElementById("signup-success").classList.add("hidden");
+}
+
+async function handleLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById("login-email").value;
+  const password = document.getElementById("login-password").value;
+  const errEl = document.getElementById("login-error");
+  errEl.classList.add("hidden");
+
+  try {
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      errEl.textContent = data.error;
+      errEl.classList.remove("hidden");
+      return;
+    }
+    localStorage.setItem("complykit-user", JSON.stringify(data.user));
+    checkAuth();
+    loadDashboard();
+  } catch (err) {
+    errEl.textContent = "خطأ في الاتصال بالسيرفر";
+    errEl.classList.remove("hidden");
+  }
+}
+
+async function handleSignup(e) {
+  e.preventDefault();
+  const name = document.getElementById("signup-name").value;
+  const email = document.getElementById("signup-email").value;
+  const password = document.getElementById("signup-password").value;
+  const errEl = document.getElementById("signup-error");
+  const successEl = document.getElementById("signup-success");
+  errEl.classList.add("hidden");
+  successEl.classList.add("hidden");
+
+  try {
+    const res = await fetch("/api/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      errEl.textContent = data.error;
+      errEl.classList.remove("hidden");
+      return;
+    }
+    successEl.textContent = t("auth_success") || "تم إنشاء الحساب بنجاح! سجّل دخولك الآن";
+    successEl.classList.remove("hidden");
+    // Auto switch to login after 1.5s
+    setTimeout(() => {
+      showAuthTab("login");
+      document.getElementById("login-email").value = email;
+    }, 1500);
+  } catch (err) {
+    errEl.textContent = "خطأ في الاتصال بالسيرفر";
+    errEl.classList.remove("hidden");
+  }
+}
+
+function handleLogout() {
+  localStorage.removeItem("complykit-user");
+  localStorage.removeItem("complykit-company-id");
+  checkAuth();
+}
+
+// On page load — check auth
+document.addEventListener("DOMContentLoaded", () => {
+  checkAuth();
+});
+
 // ============ NAVIGATION ============
 function showPage(page) {
   document.querySelectorAll(".page").forEach((p) => p.classList.remove("active"));

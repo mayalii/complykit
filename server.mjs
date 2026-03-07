@@ -3,6 +3,25 @@ import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
 
+// Load .env manually
+const __filename_env = fileURLToPath(import.meta.url);
+const __dirname_env = dirname(__filename_env);
+const envPath = join(__dirname_env, ".env");
+if (existsSync(envPath)) {
+  readFileSync(envPath, "utf-8").split("\n").forEach(line => {
+    const trimmed = line.trim();
+    if (trimmed && !trimmed.startsWith("#")) {
+      const idx = trimmed.indexOf("=");
+      if (idx > 0) {
+        const key = trimmed.slice(0, idx).trim();
+        const val = trimmed.slice(idx + 1).trim();
+        process.env[key] = val;
+      }
+    }
+  });
+  console.log("✅ .env loaded");
+}
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -20,6 +39,68 @@ if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
 const CHECKLISTS_FILE = join(DATA_DIR, "checklists.json");
 const HISTORY_FILE = join(DATA_DIR, "history.json");
 const ACTIVITY_FILE = join(DATA_DIR, "activity.json");
+const USERS_FILE = join(DATA_DIR, "users.json");
+
+// ============ USERS / AUTH ============
+function loadUsers() {
+  if (!existsSync(USERS_FILE)) return [];
+  return JSON.parse(readFileSync(USERS_FILE, "utf-8"));
+}
+function saveUsers(data) {
+  writeFileSync(USERS_FILE, JSON.stringify(data, null, 2), "utf-8");
+}
+
+// Simple hash (for hackathon demo — NOT production-grade)
+function simpleHash(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const c = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + c;
+    hash |= 0;
+  }
+  return "h_" + Math.abs(hash).toString(36);
+}
+
+// POST /api/auth/signup
+app.post("/api/auth/signup", (req, res) => {
+  const { name, email, password } = req.body;
+  if (!name || !email || !password) return res.status(400).json({ error: "جميع الحقول مطلوبة" });
+  if (password.length < 6) return res.status(400).json({ error: "كلمة المرور يجب أن تكون 6 أحرف على الأقل" });
+
+  const users = loadUsers();
+  if (users.find(u => u.email === email.toLowerCase())) {
+    return res.status(409).json({ error: "البريد الإلكتروني مسجل مسبقاً" });
+  }
+
+  const user = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+    name: name.trim(),
+    email: email.toLowerCase().trim(),
+    passwordHash: simpleHash(password),
+    createdAt: new Date().toISOString()
+  };
+  users.push(user);
+  saveUsers(users);
+
+  try { logActivity("signup", `شركة جديدة: ${user.name} (${user.email})`); } catch(e) {}
+
+  res.json({ success: true, user: { id: user.id, name: user.name, email: user.email } });
+});
+
+// POST /api/auth/login
+app.post("/api/auth/login", (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) return res.status(400).json({ error: "أدخل البريد وكلمة المرور" });
+
+  const users = loadUsers();
+  const user = users.find(u => u.email === email.toLowerCase().trim());
+  if (!user) return res.status(401).json({ error: "البريد الإلكتروني غير مسجل" });
+  if (user.passwordHash !== simpleHash(password)) return res.status(401).json({ error: "كلمة المرور غير صحيحة" });
+
+  try { logActivity("login", `دخول شركة: ${user.name}`); } catch(e) {}
+
+  res.json({ success: true, user: { id: user.id, name: user.name, email: user.email } });
+});
 
 function loadHistory() {
   if (!existsSync(HISTORY_FILE)) return [];

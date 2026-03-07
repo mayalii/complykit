@@ -132,6 +132,17 @@ const translations = {
     why_with: "مع ComplyKit",
     why_with_desc: "محتوى موحّد بصوت واحد — أي شخص يشوف محتواك يعرف إنه لشركتك. فحص تلقائي بثوانٍ + توافق مع الأنظمة السعودية.",
 
+    // Auth
+    auth_login: "دخول الشركة",
+    auth_signup: "شركة جديدة",
+    auth_company_name: "اسم الشركة",
+    auth_company_name_ph: "مثال: أرامكو، STC، نيوم...",
+    auth_company_email: "البريد الإلكتروني للشركة",
+    auth_password: "كلمة المرور",
+    auth_login_btn: "دخول",
+    auth_signup_btn: "تسجيل شركة جديدة",
+    auth_success: "تم تسجيل الشركة بنجاح! سجّل دخولك الآن",
+
     // Footer
     footer_powered: "مدعوم بالذكاء الاصطناعي",
     loading: "جاري التحليل",
@@ -268,6 +279,17 @@ const translations = {
     why_without_desc: "Everyone writes differently, content looks inconsistent every time, your audience can't recognize your identity — plus risk of regulatory violations.",
     why_with: "With ComplyKit",
     why_with_desc: "Unified content with one voice — anyone who sees your content knows it's your company. Automatic check in seconds + Saudi regulatory compliance.",
+
+    // Auth
+    auth_login: "Company Login",
+    auth_signup: "New Company",
+    auth_company_name: "Company Name",
+    auth_company_name_ph: "e.g. Aramco, STC, NEOM...",
+    auth_company_email: "Company Email",
+    auth_password: "Password",
+    auth_login_btn: "Log In",
+    auth_signup_btn: "Register Company",
+    auth_success: "Company registered successfully! Log in now",
 
     // Footer
     footer_powered: "Powered by AI",
