@@ -34,7 +34,14 @@ function hideLoading() {
 async function loadDashboard() {
   try {
     const res = await fetch("/api/checklists");
-    const checklists = await res.json();
+    const allChecklists = await res.json();
+
+    // Auto-lock to first company if not set yet
+    if (!getLoggedCompanyId() && allChecklists.length > 0) {
+      setLoggedCompany(allChecklists[0].id);
+    }
+
+    const checklists = filterMyChecklists(allChecklists);
 
     const grid = document.getElementById("checklists-grid");
     const empty = document.getElementById("empty-state");
@@ -51,7 +58,7 @@ async function loadDashboard() {
       statsRow.classList.add("hidden");
     }
 
-    // Update header company badge (user is "logged in" to first company)
+    // Update header company badge (user is "logged in" to their company)
     if (checklists.length > 0) {
       updateHeaderCompanyBadge(checklists[0].companyName);
     } else {
@@ -277,6 +284,9 @@ async function extractChecklist() {
 
     if (data.error) throw new Error(data.error);
 
+    // Lock user to this new company
+    if (data.id) setLoggedCompany(data.id);
+
     // Show result
     document.getElementById("extraction-result").classList.remove("hidden");
     document.getElementById("rules-count").textContent = `${data.totalRules} ${t("card_rules")}`;
@@ -319,7 +329,8 @@ async function extractChecklist() {
 async function loadChecklistSelect() {
   try {
     const res = await fetch("/api/checklists");
-    const checklists = await res.json();
+    const allChecklists = await res.json();
+    const checklists = filterMyChecklists(allChecklists);
     const select = document.getElementById("checklist-select");
     const banner = document.getElementById("company-banner");
 
@@ -564,7 +575,11 @@ function copyText(elementId) {
 async function loadHistory() {
   try {
     const res = await fetch("/api/history");
-    const history = await res.json();
+    const allHistory = await res.json();
+
+    // Filter history to only show logged-in company's checks
+    const myId = getLoggedCompanyId();
+    const history = myId ? allHistory.filter(h => h.checklistId === myId) : allHistory;
 
     const list = document.getElementById("history-list");
     const empty = document.getElementById("history-empty");
@@ -687,6 +702,26 @@ function toggleTheme() {
   const newTheme = isDark ? 'light' : 'dark';
   applyTheme(newTheme);
   localStorage.setItem('complykit-theme', newTheme);
+}
+
+// ============ LOGGED-IN COMPANY (isolate user to their company) ============
+function getLoggedCompanyId() {
+  return localStorage.getItem("complykit-company-id") || null;
+}
+
+function setLoggedCompany(id) {
+  localStorage.setItem("complykit-company-id", id);
+}
+
+function clearLoggedCompany() {
+  localStorage.removeItem("complykit-company-id");
+}
+
+// Filter checklists to only show the logged-in company
+function filterMyChecklists(checklists) {
+  const myId = getLoggedCompanyId();
+  if (!myId) return checklists;
+  return checklists.filter(c => c.id === myId);
 }
 
 // ============ INIT ============
