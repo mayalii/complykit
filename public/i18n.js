@@ -173,6 +173,16 @@ const translations = {
     auth_pw_hint: "استخدم 8+ أحرف مع أرقام ورموز",
     auth_footer: "ComplyKit © 2026 — مي معافا & آلاء معافا",
     auth_logout: "خروج",
+    auth_send_otp: "إرسال رمز التحقق",
+    auth_otp_label: "رمز التحقق (6 أرقام) *",
+    auth_verify_otp: "تحقق",
+    auth_email_verified: "✅ تم التحقق من البريد",
+    auth_otp_sent_to: "تم إرسال الرمز إلى",
+    auth_resend_otp: "إعادة إرسال",
+    auth_otp_invalid: "أدخل الرمز المكون من 6 أرقام",
+    auth_enter_email: "أدخل البريد الإلكتروني أولاً",
+    auth_domain_warning: "استخدم إيميل الشركة الرسمي (مثال: info@company.com) — الإيميلات الشخصية مثل Gmail و Yahoo غير مقبولة",
+    auth_otp_required: "يجب التحقق من البريد الإلكتروني أولاً — أرسل رمز التحقق وأدخله",
 
     // Footer
     footer_powered: "مدعوم بالذكاء الاصطناعي",
@@ -352,6 +362,16 @@ const translations = {
     auth_pw_hint: "Use 8+ chars with numbers & symbols",
     auth_footer: "ComplyKit © 2026 — Mai Moafa & Alaa Moafa",
     auth_logout: "Logout",
+    auth_send_otp: "Send OTP",
+    auth_otp_label: "Verification Code (6 digits) *",
+    auth_verify_otp: "Verify",
+    auth_email_verified: "✅ Email Verified",
+    auth_otp_sent_to: "Code sent to",
+    auth_resend_otp: "Resend Code",
+    auth_otp_invalid: "Enter the 6-digit verification code",
+    auth_enter_email: "Enter your email first",
+    auth_domain_warning: "Use your official company email (e.g. info@company.com) — personal emails like Gmail and Yahoo are not accepted",
+    auth_otp_required: "Email verification required — send the OTP code and verify it first",
 
     // Footer
     footer_powered: "Powered by AI",

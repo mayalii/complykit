@@ -70,6 +70,103 @@ async function handleLogin(e) {
   }
 }
 
+// ============ OTP VERIFICATION ============
+let emailVerified = false;
+
+async function sendOTP() {
+  const email = document.getElementById("signup-email").value.trim();
+  if (!email) return alert(t("auth_enter_email") || "أدخل البريد الإلكتروني أولاً");
+
+  const btn = document.getElementById("btn-send-otp");
+  btn.disabled = true;
+  btn.textContent = "⏳...";
+
+  // Hide previous messages
+  document.getElementById("otp-domain-hint").classList.add("hidden");
+  document.getElementById("otp-sent-msg").classList.add("hidden");
+
+  try {
+    const res = await fetch("/api/auth/send-otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      if (data.error.includes("إيميل الشركة") || data.error.includes("personal")) {
+        document.getElementById("otp-domain-hint").classList.remove("hidden");
+      }
+      alert(data.error);
+      btn.disabled = false;
+      btn.innerHTML = `<span data-i18n="auth_send_otp">${t("auth_send_otp") || "إرسال رمز التحقق"}</span>`;
+      return;
+    }
+
+    // Show OTP input
+    document.getElementById("otp-section").classList.remove("hidden");
+    document.getElementById("otp-sent-msg").classList.remove("hidden");
+    document.getElementById("otp-sent-text").textContent = t("auth_otp_sent_to") ? `${t("auth_otp_sent_to")} ${data.domain}` : `تم إرسال الرمز إلى ${data.domain}`;
+
+    // Countdown timer (60 seconds)
+    let countdown = 60;
+    btn.disabled = true;
+    const timer = setInterval(() => {
+      countdown--;
+      btn.textContent = `⏳ ${countdown}s`;
+      if (countdown <= 0) {
+        clearInterval(timer);
+        btn.disabled = false;
+        btn.innerHTML = `<span data-i18n="auth_resend_otp">${t("auth_resend_otp") || "إعادة إرسال"}</span>`;
+      }
+    }, 1000);
+  } catch (err) {
+    alert("خطأ في الاتصال بالسيرفر");
+    btn.disabled = false;
+    btn.innerHTML = `<span data-i18n="auth_send_otp">${t("auth_send_otp") || "إرسال رمز التحقق"}</span>`;
+  }
+}
+
+async function verifyOTP() {
+  const email = document.getElementById("signup-email").value.trim();
+  const otp = document.getElementById("signup-otp").value.trim();
+  const errEl = document.getElementById("otp-error");
+  errEl.classList.add("hidden");
+
+  if (!otp || otp.length !== 6) {
+    errEl.textContent = t("auth_otp_invalid") || "أدخل الرمز المكون من 6 أرقام";
+    errEl.classList.remove("hidden");
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/auth/verify-otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, otp })
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      errEl.textContent = data.error;
+      errEl.classList.remove("hidden");
+      return;
+    }
+
+    // Success!
+    emailVerified = true;
+    document.getElementById("otp-verified").classList.remove("hidden");
+    document.getElementById("otp-error").classList.add("hidden");
+    document.getElementById("signup-otp").disabled = true;
+    document.getElementById("signup-otp").classList.add("border-green-500", "bg-green-500/10");
+    document.getElementById("signup-email").readOnly = true;
+    document.getElementById("signup-email").classList.add("border-green-500", "bg-green-500/10");
+  } catch (err) {
+    errEl.textContent = "خطأ في الاتصال بالسيرفر";
+    errEl.classList.remove("hidden");
+  }
+}
+
 // ============ PASSWORD STRENGTH ============
 function updatePasswordStrength(password) {
   let score = 0;
@@ -122,6 +219,13 @@ async function handleSignup(e) {
   // Password strength check (minimum 8 chars)
   if (password.length < 8) {
     errEl.textContent = t("auth_pw_too_short") || "كلمة المرور لازم تكون 8 أحرف على الأقل";
+    errEl.classList.remove("hidden");
+    return;
+  }
+
+  // OTP verification check
+  if (!emailVerified) {
+    errEl.textContent = t("auth_otp_required") || "يجب التحقق من البريد الإلكتروني أولاً — أرسل رمز التحقق وأدخله";
     errEl.classList.remove("hidden");
     return;
   }

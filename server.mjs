@@ -61,28 +61,144 @@ function simpleHash(str) {
   return "h_" + Math.abs(hash).toString(36);
 }
 
-// POST /api/auth/signup
-app.post("/api/auth/signup", (req, res) => {
-  const { name, email, password } = req.body;
-  if (!name || !email || !password) return res.status(400).json({ error: "جميع الحقول مطلوبة" });
-  if (password.length < 6) return res.status(400).json({ error: "كلمة المرور يجب أن تكون 6 أحرف على الأقل" });
+// ============ EMAIL DOMAIN VALIDATION ============
+const BLOCKED_DOMAINS = [
+  "gmail.com", "yahoo.com", "yahoo.co", "hotmail.com", "outlook.com",
+  "live.com", "aol.com", "icloud.com", "mail.com", "protonmail.com",
+  "zoho.com", "yandex.com", "gmx.com", "tutanota.com", "fastmail.com",
+  "mailinator.com", "tempmail.com", "guerrillamail.com", "throwaway.email",
+  "sharklasers.com", "guerrillamailblock.com", "grr.la", "dispostable.com",
+  "yopmail.com", "10minutemail.com", "trashmail.com"
+];
+
+function isPersonalEmail(email) {
+  const domain = email.split("@")[1]?.toLowerCase();
+  if (!domain) return true;
+  return BLOCKED_DOMAINS.includes(domain);
+}
+
+// ============ OTP VERIFICATION ============
+const OTP_FILE = join(DATA_DIR, "otps.json");
+function loadOTPs() {
+  if (!existsSync(OTP_FILE)) return {};
+  return JSON.parse(readFileSync(OTP_FILE, "utf-8"));
+}
+function saveOTPs(data) {
+  writeFileSync(OTP_FILE, JSON.stringify(data, null, 2), "utf-8");
+}
+
+function generateOTP() {
+  return Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit code
+}
+
+// POST /api/auth/send-otp — send verification code to company email
+app.post("/api/auth/send-otp", async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: "البريد الإلكتروني مطلوب" });
+
+  if (isPersonalEmail(email)) {
+    return res.status(400).json({ error: "يجب استخدام إيميل الشركة الرسمي. الإيميلات الشخصية (Gmail, Yahoo, etc) غير مسموحة." });
+  }
 
   const users = loadUsers();
   if (users.find(u => u.email === email.toLowerCase())) {
     return res.status(409).json({ error: "البريد الإلكتروني مسجل مسبقاً" });
   }
 
+  const otp = generateOTP();
+  const otps = loadOTPs();
+  otps[email.toLowerCase()] = {
+    code: otp,
+    createdAt: Date.now(),
+    expiresAt: Date.now() + 10 * 60 * 1000, // 10 minutes
+    attempts: 0
+  };
+  saveOTPs(otps);
+
+  // Log OTP to console (in production, send via email API like SendGrid/Mailgun)
+  console.log(`\n📧 ═══════════════════════════════════════`);
+  console.log(`📧 OTP for ${email}: ${otp}`);
+  console.log(`📧 ═══════════════════════════════════════\n`);
+
+  // Try to send via Gemini (simulate email notification)
+  try { logActivity("otp_sent", `OTP sent to: ${email}`); } catch(e) {}
+
+  res.json({ success: true, message: "تم إرسال رمز التحقق إلى بريدك الإلكتروني", domain: email.split("@")[1] });
+});
+
+// POST /api/auth/verify-otp — verify the OTP code
+app.post("/api/auth/verify-otp", (req, res) => {
+  const { email, otp } = req.body;
+  if (!email || !otp) return res.status(400).json({ error: "أدخل البريد والرمز" });
+
+  const otps = loadOTPs();
+  const record = otps[email.toLowerCase()];
+
+  if (!record) return res.status(400).json({ error: "لم يتم إرسال رمز لهذا البريد. أعد الإرسال." });
+  if (Date.now() > record.expiresAt) return res.status(400).json({ error: "انتهت صلاحية الرمز. أعد الإرسال." });
+  if (record.attempts >= 5) return res.status(429).json({ error: "تم تجاوز عدد المحاولات. أعد الإرسال." });
+
+  record.attempts++;
+  saveOTPs(otps);
+
+  if (record.code !== otp.trim()) {
+    return res.status(400).json({ error: `الرمز غير صحيح. تبقى ${5 - record.attempts} محاولات.` });
+  }
+
+  // Mark as verified
+  record.verified = true;
+  saveOTPs(otps);
+
+  res.json({ success: true, message: "تم التحقق بنجاح!" });
+});
+
+// POST /api/auth/signup
+app.post("/api/auth/signup", (req, res) => {
+  const { name, email, password } = req.body;
+  if (!name || !email || !password) return res.status(400).json({ error: "جميع الحقول مطلوبة" });
+  if (password.length < 8) return res.status(400).json({ error: "كلمة المرور يجب أن تكون 8 أحرف على الأقل" });
+
+  // Block personal emails
+  if (isPersonalEmail(email)) {
+    return res.status(400).json({ error: "يجب استخدام إيميل الشركة الرسمي. الإيميلات الشخصية غير مسموحة." });
+  }
+
+  // Check OTP verification
+  const otps = loadOTPs();
+  const otpRecord = otps[email.toLowerCase()];
+  if (!otpRecord || !otpRecord.verified) {
+    return res.status(400).json({ error: "يجب التحقق من بريدك الإلكتروني أولاً. اضغط 'إرسال رمز التحقق'." });
+  }
+
+  const users = loadUsers();
+  if (users.find(u => u.email === email.toLowerCase())) {
+    return res.status(409).json({ error: "البريد الإلكتروني مسجل مسبقاً" });
+  }
+
+  // Check if domain already registered by another company
+  const emailDomain = email.split("@")[1].toLowerCase();
+  const existingDomainUser = users.find(u => u.email.split("@")[1].toLowerCase() === emailDomain);
+  if (existingDomainUser) {
+    return res.status(409).json({ error: `هذا الدومين (${emailDomain}) مسجل مسبقاً لشركة "${existingDomainUser.name}". تواصل مع مسؤول الحساب.` });
+  }
+
   const user = {
     id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
     name: name.trim(),
     email: email.toLowerCase().trim(),
+    domain: emailDomain,
     passwordHash: simpleHash(password),
+    verified: true,
     createdAt: new Date().toISOString()
   };
   users.push(user);
   saveUsers(users);
 
-  try { logActivity("signup", `شركة جديدة: ${user.name} (${user.email})`); } catch(e) {}
+  // Clean up OTP
+  delete otps[email.toLowerCase()];
+  saveOTPs(otps);
+
+  try { logActivity("signup", `شركة جديدة: ${user.name} (${user.email}) [verified]`); } catch(e) {}
 
   res.json({ success: true, user: { id: user.id, name: user.name, email: user.email } });
 });
