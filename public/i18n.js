@@ -172,6 +172,7 @@ const translations = {
     auth_pw_too_short: "كلمة المرور لازم تكون 8 أحرف على الأقل",
     auth_pw_hint: "استخدم 8+ أحرف مع أرقام ورموز",
     auth_footer: "ComplyKit © 2026 — مي معافا & آلاء معافا",
+    auth_logout: "خروج",
 
     // Footer
     footer_powered: "مدعوم بالذكاء الاصطناعي",
@@ -350,6 +351,7 @@ const translations = {
     auth_pw_too_short: "Password must be at least 8 characters",
     auth_pw_hint: "Use 8+ chars with numbers & symbols",
     auth_footer: "ComplyKit © 2026 — Mai Moafa & Alaa Moafa",
+    auth_logout: "Logout",
 
     // Footer
     footer_powered: "Powered by AI",
