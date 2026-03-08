@@ -70,15 +70,61 @@ async function handleLogin(e) {
   }
 }
 
+// ============ PASSWORD STRENGTH ============
+function updatePasswordStrength(password) {
+  let score = 0;
+  if (password.length >= 8) score++;
+  if (/[A-Z]/.test(password)) score++;
+  if (/[0-9]/.test(password)) score++;
+  if (/[^A-Za-z0-9]/.test(password)) score++;
+
+  const colors = ["bg-gray-700", "bg-red-500", "bg-yellow-500", "bg-blue-500", "bg-green-500"];
+  const labels = {
+    ar: ["", "ضعيفة", "مقبولة", "جيدة", "قوية"],
+    en: ["", "Weak", "Fair", "Good", "Strong"]
+  };
+  const labelColors = ["text-gray-500", "text-red-400", "text-yellow-400", "text-blue-400", "text-green-400"];
+
+  for (let i = 1; i <= 4; i++) {
+    const bar = document.getElementById(`pw-bar-${i}`);
+    bar.className = `h-1 flex-1 rounded-full transition-colors ${i <= score ? colors[score] : "bg-gray-700"}`;
+  }
+
+  const textEl = document.getElementById("pw-strength-text");
+  const lang = (typeof currentLang !== "undefined" ? currentLang : "ar");
+  if (score > 0) {
+    textEl.textContent = labels[lang]?.[score] || labels.ar[score];
+    textEl.className = `text-xs mt-1 ${labelColors[score]}`;
+  } else {
+    textEl.textContent = lang === "en" ? "Use 8+ chars with numbers & symbols" : "استخدم 8+ أحرف مع أرقام ورموز";
+    textEl.className = "text-xs mt-1 text-gray-500";
+  }
+}
+
 async function handleSignup(e) {
   e.preventDefault();
   const name = document.getElementById("signup-name").value;
   const email = document.getElementById("signup-email").value;
+  const emailConfirm = document.getElementById("signup-email-confirm").value;
   const password = document.getElementById("signup-password").value;
   const errEl = document.getElementById("signup-error");
   const successEl = document.getElementById("signup-success");
   errEl.classList.add("hidden");
   successEl.classList.add("hidden");
+
+  // Email confirmation check
+  if (email !== emailConfirm) {
+    errEl.textContent = t("auth_email_mismatch") || "البريد الإلكتروني غير متطابق";
+    errEl.classList.remove("hidden");
+    return;
+  }
+
+  // Password strength check (minimum 8 chars)
+  if (password.length < 8) {
+    errEl.textContent = t("auth_pw_too_short") || "كلمة المرور لازم تكون 8 أحرف على الأقل";
+    errEl.classList.remove("hidden");
+    return;
+  }
 
   try {
     const res = await fetch("/api/auth/signup", {

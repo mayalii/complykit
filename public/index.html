@@ -104,20 +104,65 @@
 </head>
 <body class="dark min-h-screen">
 
-  <!-- ============ AUTH PAGE (Login / Sign Up) ============ -->
-  <div id="auth-page" class="min-h-screen flex items-center justify-center p-6" style="display:none;">
-    <div class="w-full max-w-md">
-      <!-- Logo -->
-      <div class="text-center mb-8">
-        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 mb-4">
-          <span class="text-3xl text-white font-bold">C</span>
+  <!-- ============ AUTH PAGE (Login / Sign Up) — Split Layout ============ -->
+  <div id="auth-page" class="min-h-screen flex items-center justify-center p-4 md:p-8" style="display:none;">
+    <div class="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-0 rounded-3xl overflow-hidden glass border border-white/10">
+
+      <!-- ===== LEFT SIDE: Product Info ===== -->
+      <div class="relative p-8 md:p-12 flex flex-col justify-center" style="background: linear-gradient(135deg, #0a1628 0%, #0c2d5e 50%, #0c93e9 100%);">
+        <div class="absolute top-0 left-0 w-full h-full opacity-10">
+          <div class="absolute top-10 left-10 w-32 h-32 rounded-full bg-white/20 blur-3xl"></div>
+          <div class="absolute bottom-10 right-20 w-48 h-48 rounded-full bg-brand-400/30 blur-3xl"></div>
         </div>
-        <h1 class="text-2xl font-bold t-text-primary">ComplyKit</h1>
-        <p class="text-sm t-text-secondary mt-1" data-i18n="subtitle">محتوى موحّد — جمهورك يعرفك من أول نظرة</p>
+        <div class="relative z-10">
+          <!-- Logo -->
+          <div class="flex items-center gap-3 mb-8">
+            <div class="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center border border-white/20">
+              <span class="text-2xl text-white font-bold">C</span>
+            </div>
+            <div>
+              <h1 class="text-xl font-bold" style="color:#fff !important">ComplyKit</h1>
+              <p class="text-xs" style="color:rgba(255,255,255,0.7) !important" data-i18n="auth_tagline">فحص ذكي للمحتوى الرقمي</p>
+            </div>
+          </div>
+
+          <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color:#fff !important" data-i18n="auth_hero_title">محتوى متوافق،<br/>قبل ما ينزل.</h2>
+          <p class="text-base mb-8 leading-relaxed" style="color:rgba(255,255,255,0.85) !important" data-i18n="auth_hero_desc">أول منصة سعودية تفحص محتواك الرقمي فحص مزدوج — تناسق مع البراند + توافق مع الأنظمة السعودية.</p>
+
+          <!-- Feature Bullets -->
+          <div class="space-y-4 mb-8">
+            <div class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full bg-green-400/20 flex items-center justify-center flex-shrink-0"><span style="color:#4ade80 !important" class="text-xs">✓</span></span>
+              <p class="text-sm" style="color:rgba(255,255,255,0.9) !important" data-i18n="auth_f1">فحص مزدوج: تناسق البراند + توافق الأنظمة السعودية</p>
+            </div>
+            <div class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full bg-green-400/20 flex items-center justify-center flex-shrink-0"><span style="color:#4ade80 !important" class="text-xs">✓</span></span>
+              <p class="text-sm" style="color:rgba(255,255,255,0.9) !important" data-i18n="auth_f2">تحليل صور وفيديوهات بالذكاء الاصطناعي</p>
+            </div>
+            <div class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full bg-green-400/20 flex items-center justify-center flex-shrink-0"><span style="color:#4ade80 !important" class="text-xs">✓</span></span>
+              <p class="text-sm" style="color:rgba(255,255,255,0.9) !important" data-i18n="auth_f3">نسخة مصححة جاهزة للنشر بضغطة زر</p>
+            </div>
+            <div class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full bg-green-400/20 flex items-center justify-center flex-shrink-0"><span style="color:#4ade80 !important" class="text-xs">✓</span></span>
+              <p class="text-sm" style="color:rgba(255,255,255,0.9) !important" data-i18n="auth_f4">21+ نظام سعودي مغطى (PDPL، تجارة إلكترونية، إعلانات...)</p>
+            </div>
+            <div class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full bg-green-400/20 flex items-center justify-center flex-shrink-0"><span style="color:#4ade80 !important" class="text-xs">✓</span></span>
+              <p class="text-sm" style="color:rgba(255,255,255,0.9) !important" data-i18n="auth_f5">حماية هوية شركتك — كل حساب مرتبط بشركة واحدة فقط</p>
+            </div>
+          </div>
+
+          <!-- Trust Badge -->
+          <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 border border-white/15 w-fit">
+            <span style="color:#4ade80 !important" class="text-sm">🔒</span>
+            <span class="text-xs" style="color:rgba(255,255,255,0.8) !important" data-i18n="auth_trust">بياناتك محمية حسب نظام PDPL السعودي</span>
+          </div>
+        </div>
       </div>
 
-      <!-- Auth Card -->
-      <div class="glass rounded-2xl p-8 border border-white/10">
+      <!-- ===== RIGHT SIDE: Auth Forms ===== -->
+      <div class="p-8 md:p-10 flex flex-col justify-center">
         <!-- Tab Toggle -->
         <div class="flex mb-6 rounded-xl overflow-hidden border border-gray-700">
           <button id="tab-login" onclick="showAuthTab('login')" class="flex-1 py-2.5 text-sm font-semibold text-center transition bg-brand-600 text-white" data-i18n="auth_login">تسجيل الدخول</button>
@@ -127,50 +172,93 @@
         <!-- Login Form -->
         <form id="form-login" onsubmit="handleLogin(event)" class="space-y-4">
           <div>
-            <label class="block text-sm font-medium t-text-secondary mb-1.5" data-i18n="auth_company_email">البريد الإلكتروني للشركة</label>
+            <label class="block text-sm font-medium t-text-secondary mb-1.5" data-i18n="auth_company_email">البريد الإلكتروني للشركة *</label>
             <input type="email" id="login-email" required class="w-full px-4 py-3 rounded-xl t-input border transition text-sm" placeholder="info@company.com" dir="ltr">
           </div>
           <div>
-            <label class="block text-sm font-medium t-text-secondary mb-1.5" data-i18n="auth_password">كلمة المرور</label>
+            <label class="block text-sm font-medium t-text-secondary mb-1.5" data-i18n="auth_password">كلمة المرور *</label>
             <input type="password" id="login-password" required minlength="6" class="w-full px-4 py-3 rounded-xl t-input border transition text-sm" placeholder="••••••••" dir="ltr">
           </div>
           <div id="login-error" class="hidden text-sm text-red-400 text-center"></div>
           <button type="submit" class="w-full py-3 bg-gradient-to-l from-brand-500 to-brand-700 text-white rounded-xl font-bold hover:opacity-90 transition text-sm">
             <span data-i18n="auth_login_btn">دخول</span>
           </button>
+          <!-- PDPL Notice for Login -->
+          <p class="text-xs text-gray-500 text-center mt-3" data-i18n="auth_pdpl_login">بتسجيل دخولك، أنت توافق على سياسة الخصوصية وحماية البيانات</p>
         </form>
 
         <!-- Signup Form -->
-        <form id="form-signup" onsubmit="handleSignup(event)" class="space-y-4" style="display:none;">
+        <form id="form-signup" onsubmit="handleSignup(event)" class="space-y-3" style="display:none;">
           <div>
-            <label class="block text-sm font-medium t-text-secondary mb-1.5" data-i18n="auth_company_name">اسم الشركة</label>
+            <label class="block text-sm font-medium t-text-secondary mb-1.5" data-i18n="auth_company_name">اسم الشركة *</label>
             <input type="text" id="signup-name" required class="w-full px-4 py-3 rounded-xl t-input border transition text-sm" data-i18n-placeholder="auth_company_name_ph">
           </div>
           <div>
-            <label class="block text-sm font-medium t-text-secondary mb-1.5" data-i18n="auth_company_email">البريد الإلكتروني للشركة</label>
+            <label class="block text-sm font-medium t-text-secondary mb-1.5" data-i18n="auth_company_email">البريد الإلكتروني للشركة *</label>
             <input type="email" id="signup-email" required class="w-full px-4 py-3 rounded-xl t-input border transition text-sm" placeholder="info@company.com" dir="ltr">
           </div>
           <div>
-            <label class="block text-sm font-medium t-text-secondary mb-1.5" data-i18n="auth_password">كلمة المرور</label>
-            <input type="password" id="signup-password" required minlength="6" class="w-full px-4 py-3 rounded-xl t-input border transition text-sm" placeholder="••••••••" dir="ltr">
+            <label class="block text-sm font-medium t-text-secondary mb-1.5" data-i18n="auth_confirm_email">تأكيد البريد الإلكتروني *</label>
+            <input type="email" id="signup-email-confirm" required class="w-full px-4 py-3 rounded-xl t-input border transition text-sm" placeholder="info@company.com" dir="ltr">
           </div>
+          <div>
+            <label class="block text-sm font-medium t-text-secondary mb-1.5" data-i18n="auth_password">كلمة المرور *</label>
+            <input type="password" id="signup-password" required minlength="8" class="w-full px-4 py-3 rounded-xl t-input border transition text-sm" placeholder="8 أحرف على الأقل" dir="ltr" oninput="updatePasswordStrength(this.value)">
+            <!-- Password Strength Indicator -->
+            <div class="mt-2">
+              <div class="flex gap-1">
+                <div id="pw-bar-1" class="h-1 flex-1 rounded-full bg-gray-700 transition-colors"></div>
+                <div id="pw-bar-2" class="h-1 flex-1 rounded-full bg-gray-700 transition-colors"></div>
+                <div id="pw-bar-3" class="h-1 flex-1 rounded-full bg-gray-700 transition-colors"></div>
+                <div id="pw-bar-4" class="h-1 flex-1 rounded-full bg-gray-700 transition-colors"></div>
+              </div>
+              <p id="pw-strength-text" class="text-xs text-gray-500 mt-1" data-i18n="auth_pw_hint">استخدم 8+ أحرف مع أرقام ورموز</p>
+            </div>
+          </div>
+
+          <!-- Terms & Conditions Checkbox -->
+          <div class="flex items-start gap-2 mt-2">
+            <input type="checkbox" id="signup-terms" required class="mt-1 w-4 h-4 rounded border-gray-600 text-brand-600 focus:ring-brand-500">
+            <label for="signup-terms" class="text-xs t-text-secondary leading-relaxed" data-i18n="auth_terms">
+              أوافق على <a href="#" class="text-brand-400 underline">الشروط والأحكام</a> و<a href="#" class="text-brand-400 underline">سياسة الخصوصية</a>. أقر بأن البيانات المدخلة صحيحة وأن هذا الحساب يمثل شركتي فقط.
+            </label>
+          </div>
+
+          <!-- PDPL Consent Checkbox -->
+          <div class="flex items-start gap-2">
+            <input type="checkbox" id="signup-pdpl" required class="mt-1 w-4 h-4 rounded border-gray-600 text-brand-600 focus:ring-brand-500">
+            <label for="signup-pdpl" class="text-xs t-text-secondary leading-relaxed" data-i18n="auth_pdpl_consent">
+              أوافق على معالجة بياناتي وفقاً لنظام حماية البيانات الشخصية (PDPL) السعودي. يمكنني سحب موافقتي في أي وقت عبر البريد الإلكتروني.
+            </label>
+          </div>
+
           <div id="signup-error" class="hidden text-sm text-red-400 text-center"></div>
           <div id="signup-success" class="hidden text-sm text-green-400 text-center"></div>
-          <button type="submit" class="w-full py-3 bg-gradient-to-l from-brand-500 to-brand-700 text-white rounded-xl font-bold hover:opacity-90 transition text-sm">
+          <button type="submit" class="w-full py-3 bg-gradient-to-l from-brand-500 to-brand-700 text-white rounded-xl font-bold hover:opacity-90 transition text-sm mt-2">
             <span data-i18n="auth_signup_btn">تسجيل شركة جديدة</span>
           </button>
+
+          <!-- Identity Protection Notice -->
+          <div class="flex items-start gap-2 mt-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+            <span class="text-sm mt-0.5">🛡️</span>
+            <p class="text-xs text-amber-300/90" data-i18n="auth_identity_notice">حماية الهوية: كل حساب مرتبط بشركة واحدة فقط. لا يمكن لأي جهة انتحال هوية شركة أخرى. أي محاولة انتحال ستؤدي لإيقاف الحساب فوراً.</p>
+          </div>
         </form>
+
+        <!-- Lang & Theme toggles -->
+        <div class="flex justify-center gap-3 mt-6 pt-4 border-t border-gray-700/50">
+          <button onclick="toggleTheme()" class="theme-toggle flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-700 text-sm t-text-secondary transition">
+            <span id="auth-theme-icon">☀️</span>
+          </button>
+          <button onclick="toggleLang()" class="lang-toggle flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-700 text-sm t-text-secondary transition">
+            <span>🌐</span> <span id="auth-lang-label">EN</span>
+          </button>
+        </div>
+
+        <!-- Footer -->
+        <p class="text-xs text-gray-600 text-center mt-4" data-i18n="auth_footer">ComplyKit &copy; 2026 — مي معافا & آلاء معافا</p>
       </div>
 
-      <!-- Lang & Theme toggles -->
-      <div class="flex justify-center gap-3 mt-6">
-        <button onclick="toggleTheme()" class="theme-toggle flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-700 text-sm t-text-secondary transition">
-          <span id="auth-theme-icon">☀️</span>
-        </button>
-        <button onclick="toggleLang()" class="lang-toggle flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-700 text-sm t-text-secondary transition">
-          <span>🌐</span> <span id="auth-lang-label">EN</span>
-        </button>
-      </div>
     </div>
   </div>
 
