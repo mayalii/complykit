@@ -4,7 +4,6 @@
 
 ComplyKit reviews digital content against **21+ Saudi regulations** before publishing. Send your content (ads, posts, product listings, contracts) and get an instant compliance report with a corrected version.
 
-Built for **Hackathon Tuwaiq** 🚀
 
 ---
 
